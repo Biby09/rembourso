@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# PHP / Composer
+/vendor/
+/composer.lock
+
+# Node / npm
+/node_modules/
+/package-lock.json
+
+# Uploads / generated media
+/uploads/
+
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+*.crt
+
+# IDE / editor
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS generated files
+Thumbs.db
+
+# Optional: keep project source only
+# If you do not want to commit the SQL dump, uncomment the next line:
+# em9jnz_rembourso.sql

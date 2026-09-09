@@ -1,0 +1,2 @@
+# Bloque l'accès web au dossier config (Apache 2.4+)
+Require all denied
