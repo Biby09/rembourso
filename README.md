@@ -22,7 +22,8 @@ Rembourso est une plateforme web permettant à des organisations (associations, 
 
 ## Prérequis
 
-- PHP 8.1+ avec l'extension PDO MySQL
+- PHP 8.1+ avec les extensions PDO MySQL et Imagick
+- Imagick compatible avec la version de PHP utilisée (par ex. `pecl install imagick` ou via votre package manager, en fonction de votre version PHP)
 - MySQL/MariaDB
 - [Composer](https://getcomposer.org/)
 - Node.js + npm
@@ -32,7 +33,7 @@ Rembourso est une plateforme web permettant à des organisations (associations, 
 
 ```bash
 git clone <url-du-repo>
-cd v3
+cd rembourso_v1-0-0
 composer install
 npm install
 ```
