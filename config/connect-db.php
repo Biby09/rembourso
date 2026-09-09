@@ -3,7 +3,7 @@
 if ($_SERVER['SERVER_NAME'] === 'localhost') {
     $MYSQL_HOST = 'localhost';
     $MYSQL_PORT = 3306;
-    $MYSQL_NAME = 'rembourso_v2_2';
+    $MYSQL_NAME = 'db_rembourso';
     $MYSQL_USER = 'root';
     $MYSQL_PASSWORD = 'root';
 

@@ -39,7 +39,7 @@ npm install
 
 ### Base de données
 
-En local, la connexion utilise des identifiants par défaut (voir `config/connect-db.php`) pointant vers une base `rembourso_v2_2` sur `localhost` (utilisateur `root` / mot de passe `root`). Adaptez ces valeurs à votre environnement si besoin.
+En local, la connexion utilise des identifiants par défaut (voir `config/connect-db.php`) pointant vers une base `db_rembourso` sur `localhost` (utilisateur `root` / mot de passe `root`). Adaptez ces valeurs à votre environnement si besoin.
 
 En production, la configuration passe par les variables d'environnement suivantes :
 
