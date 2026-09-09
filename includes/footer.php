@@ -8,6 +8,8 @@
             <p class="small mb-0">
                 Version 1.0.0 &middot;
                 <a href="https://github.com/Biby09/rembourso" class="link-light" target="_blank" rel="noopener noreferrer" style="color: white">GitHub</a>
+                &middot;
+                <a href="/mentions-legales.php" class="link-light" style="color: white">Mentions légales</a>
             </p>
         </div>
     </div>
