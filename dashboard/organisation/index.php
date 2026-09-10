@@ -619,12 +619,19 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'; ?>
         //Gestion de l'import du fichier
         const input = document.querySelector('input[type="file"]');
         const acceptedTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'application/pdf'];
+        const maxFileSize = 5 * 1024 * 1024; // Doit rester aligné avec la limite côté serveur (submit-repayment-request.php)
 
         input.addEventListener('change', () => {
             const files = Array.from(input.files);
 
             if (files.some(file => !acceptedTypes.includes(file.type))) {
                 alert('Type de fichier non autorisé. Acceptés: images (PNG, JPEG, WebP, GIF) et PDF');
+                input.value = '';
+                return;
+            }
+
+            if (files.some(file => file.size > maxFileSize)) {
+                alert('Chaque fichier est limité à 5MB.');
                 input.value = '';
             }
         });
