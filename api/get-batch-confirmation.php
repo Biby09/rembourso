@@ -207,7 +207,8 @@ if (!empty($tempReceiptPdfs)) {
             }
         }
 
-        $pdfOutput = $fpdi->output();
+        // 'S' force le renvoi de la chaîne PDF, sans que Fpdi n'envoie ses propres en-têtes/nom de fichier
+        $pdfOutput = $fpdi->output('S');
     } finally {
         foreach ($filesToDelete as $file) {
             @unlink($file);
@@ -216,5 +217,5 @@ if (!empty($tempReceiptPdfs)) {
 }
 
 header('Content-Type: application/pdf');
-header('Content-Disposition: attachment; filename="' . $batch->date->format('Y-m-d-H-i-s') . '-rembourso_confirmation.pdf"');
+header('Content-Disposition: inline; filename="' . $batch->date->format('Y-m-d-H-i-s') . '-rembourso_confirmation.pdf"');
 echo $pdfOutput;
