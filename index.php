@@ -30,46 +30,53 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
         </section>
 
         <!-- AVANTAGES -->
-        <section class="py-5">
+        <section class="homepage-features py-5">
             <div class="container">
                 <h2 class="text-center mb-5">Pourquoi utiliser cette plateforme ?</h2>
-                <div class="row g-4">
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card h-100 text-center">
-                            <div class="card-body">
-                                <h3 class="card-title">Clarté</h3>
-                                <img src="/media/home/clarete.svg" alt="Icone clarté" class="img-fluid my-3" style="max-width: 100px;">
-                                <p class="card-text">Retrouvez vos demandes, vos organisations et vos invitations depuis votre tableau de bord.</p>
-                            </div>
+                <div class="homepage-feature-grid">
+                    <article class="homepage-feature">
+                        <div class="homepage-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
                         </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card h-100 text-center">
-                            <div class="card-body">
-                                <h3 class="card-title">Gain de temps</h3>
-                                <img src="/media/home/time.svg" alt="Icone gain de temps" class="img-fluid my-3" style="max-width: 100px;">
-                                <p class="card-text">Déposez une demande en quelques étapes et laissez les responsables la traiter au même endroit.</p>
-                            </div>
+                        <h3>Clarté</h3>
+                        <p>Retrouvez vos demandes, vos organisations et vos invitations depuis votre tableau de bord.</p>
+                    </article>
+                    <article class="homepage-feature">
+                        <div class="homepage-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <polyline points="12 7 12 12 15 14"></polyline>
+                            </svg>
                         </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card h-100 text-center">
-                            <div class="card-body">
-                                <h3 class="card-title">Organisation</h3>
-                                <img src="/media/home/organisation.svg" alt="Icone organisation" class="img-fluid my-3" style="max-width: 100px;">
-                                <p class="card-text">Utilisez les catégories et sous-catégories configurées par votre organisation.</p>
-                            </div>
+                        <h3>Gain de temps</h3>
+                        <p>Déposez une demande en quelques étapes et laissez les responsables la traiter au même endroit.</p>
+                    </article>
+                    <article class="homepage-feature">
+                        <div class="homepage-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M3 9l9-5 9 5-9 5-9-5z"></path>
+                                <path d="M3 9v8l9 5 9-5V9"></path>
+                                <path d="M12 14v8"></path>
+                            </svg>
                         </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card h-100 text-center">
-                            <div class="card-body">
-                                <h3 class="card-title">Sécurisé</h3>
-                                <img src="/media/home/safety.svg" alt="Icone sécurité" class="img-fluid my-3" style="max-width: 100px;">
-                                <p class="card-text">Chaque organisation dispose d'un espace privé avec des accès adaptés aux rôles de chacun.</p>
-                            </div>
+                        <h3>Organisation</h3>
+                        <p>Utilisez les catégories et sous-catégories configurées par votre organisation.</p>
+                    </article>
+                    <article class="homepage-feature">
+                        <div class="homepage-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path>
+                                <path d="M9 12l2 2 4-4"></path>
+                            </svg>
                         </div>
-                    </div>
+                        <h3>Sécurisé</h3>
+                        <p>Chaque organisation dispose d'un espace privé avec des accès adaptés aux rôles de chacun.</p>
+                    </article>
                 </div>
             </div>
         </section>

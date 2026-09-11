@@ -20228,6 +20228,55 @@ textarea.form-control-lg {
   background: linear-gradient(150deg, #367447 0%, rgb(29.7, 63.8, 39.05) 100%) !important;
 }
 
+.homepage-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.homepage-feature {
+  padding: 0.5rem 0.25rem;
+}
+
+.homepage-feature-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.625rem;
+  background: rgba(54, 116, 71, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.homepage-feature-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #367447;
+}
+
+.homepage-feature h3, .homepage-feature .h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.homepage-feature p {
+  margin: 0;
+  color: #4b5568;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 991.98px) {
+  .homepage-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 575.98px) {
+  .homepage-feature-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
 body {
   display: flex !important;
   flex-direction: column !important;

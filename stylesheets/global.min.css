@@ -725,6 +725,10 @@ progress {
     flex: 0 0 auto;
     width: 50%;
   }
+  .col-lg-8 {
+    flex: 0 0 auto;
+    width: 66.66666667%;
+  }
   .col-lg-12 {
     flex: 0 0 auto;
     width: 100%;
@@ -2859,6 +2863,15 @@ textarea.form-control {
   background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
 }
 
+.link-light {
+  color: RGBA(var(--bs-light-rgb), var(--bs-link-opacity, 1)) !important;
+  text-decoration-color: RGBA(var(--bs-light-rgb), var(--bs-link-underline-opacity, 1)) !important;
+}
+.link-light:hover, .link-light:focus {
+  color: RGBA(212, 230, 217, var(--bs-link-opacity, 1)) !important;
+  text-decoration-color: RGBA(212, 230, 217, var(--bs-link-underline-opacity, 1)) !important;
+}
+
 .ratio {
   position: relative;
   width: 100%;
@@ -3012,11 +3025,6 @@ textarea.form-control {
 .mx-auto {
   margin-right: auto !important;
   margin-left: auto !important;
-}
-
-.my-3 {
-  margin-top: 1rem !important;
-  margin-bottom: 1rem !important;
 }
 
 .mt-2 {
@@ -3564,6 +3572,55 @@ textarea.form-control {
   background: linear-gradient(150deg, #367447 0%, rgb(29.7, 63.8, 39.05) 100%) !important;
 }
 
+.homepage-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.homepage-feature {
+  padding: 0.5rem 0.25rem;
+}
+
+.homepage-feature-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.625rem;
+  background: rgba(54, 116, 71, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.homepage-feature-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #367447;
+}
+
+.homepage-feature h3, .homepage-feature .h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.homepage-feature p {
+  margin: 0;
+  color: #4b5568;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 991.98px) {
+  .homepage-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 575.98px) {
+  .homepage-feature-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
 body {
   display: flex !important;
   flex-direction: column !important;
