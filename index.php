@@ -1,5 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
+$page_title = 'Rembourso | Gestion des remboursements associatifs';
+$page_description = 'Rembourso simplifie la gestion des demandes de remboursement pour les associations et organisations.';
 ?>
 <!DOCTYPE html>
 <html lang="fr">

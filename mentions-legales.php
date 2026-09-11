@@ -4,7 +4,8 @@
 <html lang="fr">
 
 <?php
-$page_title = "Mentions légales - Rembourso";
+$page_title = 'Mentions légales | Rembourso';
+$page_description = 'Consultez les mentions légales du site Rembourso.';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'; ?>
 
 <body>

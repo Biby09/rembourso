@@ -4,7 +4,8 @@
 <html lang="fr">
 
 <?php
-$page_title = "Contact - Remourso";
+$page_title = 'Contacter Rembourso';
+$page_description = 'Une question sur Rembourso ? Contactez notre équipe au sujet de la gestion des remboursements associatifs.';
 include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'; ?>
 
 <body>

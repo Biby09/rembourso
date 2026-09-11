@@ -1,4 +1,8 @@
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php'; ?>
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
+$page_title = 'Gestion des remboursements pour associations | Rembourso';
+$page_description = 'Découvrez comment Rembourso aide les associations à gérer les demandes, justificatifs et remboursements.';
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
