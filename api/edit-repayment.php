@@ -111,7 +111,7 @@ if (isset($_FILES['receipts']) && !empty($_FILES['receipts']['name'][0])) {
 
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_file($finfo, $fileTmpPath);
-        finfo_close($finfo);
+        unset($finfo);
         if ($_FILES['receipts']['size'][$index] > 5 * 1024 * 1024 || !in_array($mimeType, $allowedMimeTypes, true) || ($mimeType !== 'application/pdf' && @getimagesize($fileTmpPath) === false)) {
             echo json_encode(['success' => false, 'error' => 'Invalid receipt file']);
             exit;

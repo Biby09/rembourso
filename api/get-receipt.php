@@ -64,7 +64,8 @@ if ($fileSize === false) {
 
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
 $mimeType = finfo_file($finfo, $filePath);
-finfo_close($finfo);
+unset($finfo);
+
 $allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
 if ($mimeType === false || !in_array($mimeType, $allowedMimeTypes, true)) {
     http_response_code(415);

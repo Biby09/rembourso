@@ -52,10 +52,10 @@ try {
     $subcategories = $category->getSubcategories();
 
     $subcatArray = array_map(function ($subcat) {
-        return ['id' => $subcat->id, 'name' => htmlspecialchars($subcat->name)];
+        return ['id' => $subcat->id, 'name' => $subcat->name];
     }, $subcategories);
 
-    echo json_encode(['success' => true, 'subcategories' => $subcatArray, 'categoryName' => htmlspecialchars($category->name)]);
+    echo json_encode(['success' => true, 'subcategories' => $subcatArray, 'categoryName' => $category->name]);
 } catch (Exception $e) {
     log_server_exception($e, 'Erreur de récupération des sous-catégories');
     http_response_code(500);

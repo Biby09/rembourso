@@ -130,7 +130,7 @@ if (isset($_FILES['receipts'])) {
 
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $fileTmpPath);
-        finfo_close($finfo);
+        unset($finfo);
 
         $allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
         if (!in_array($mime, $allowedMimeTypes, true)) {
