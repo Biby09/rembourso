@@ -310,6 +310,8 @@ async function respondToInvitation(accept, token = null, id = null, organisation
             if (accept) {
                 if (organisationId) {
                     window.location.href = `/dashboard/organisation/?id=${organisationId}`;
+                }else{
+                    window.location.href = '/dashboard/';
                 }
             } else {
                 window.location.href = '/dashboard/';
