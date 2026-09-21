@@ -275,7 +275,7 @@ class User
     {
         global $mysqlClient;
 
-        $stmt = $mysqlClient->prepare("SELECT i.id_invitation FROM invitations i JOIN tokens t ON i.id_invitation = t.id_token WHERE i.idx_user = :user_id AND t.tok_used = 0 AND t.tok_expires_at > NOW()");
+        $stmt = $mysqlClient->prepare("SELECT i.id_invitation FROM invitations i JOIN tokens t ON i.idx_token = t.id_token WHERE i.idx_user = :user_id AND t.tok_used = 0 AND t.tok_expires_at > NOW()");
         $stmt->execute([':user_id' => $this->id]);
         $invitationIds = $stmt->fetchAll();
 

@@ -175,7 +175,7 @@ try {
                         } else {
                             foreach ($invitations as $invitation) {
                                 $org = new Organisation($invitation->organisation_id); ?>
-                                <div class="card mb-3 border-start border-secondary border-4">
+                                <div class="card mb-3 border-start border-secondary border-2">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h3 class="card-title mb-0 text-secondary"> <?= htmlspecialchars($org->name) ?></h3>

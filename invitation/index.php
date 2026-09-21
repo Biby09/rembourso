@@ -72,11 +72,11 @@ if (in_array($user, $organisation->getMembers())) {
 
         acceptBtn.addEventListener('click', () => {
             respondToInvitation(true, '<?= $invitation->token ?>');
-        })
+        });
 
         declineBtn.addEventListener('click', () => {
             respondToInvitation(false, '<?= $invitation->token ?>');
-        })
+        });
     </script>
 </body>
 
