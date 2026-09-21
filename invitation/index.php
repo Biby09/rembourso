@@ -71,11 +71,11 @@ if (in_array($user, $organisation->getMembers())) {
         const declineBtn = document.getElementById('decline-btn');
 
         acceptBtn.addEventListener('click', () => {
-            respondToInvitation(true, '<?= $invitation->token ?>', '<?= $organisation->id ?>');
+            respondToInvitation(true, '<?= $invitation->token ?>', null, '<?= $organisation->id ?>');
         });
 
         declineBtn.addEventListener('click', () => {
-            respondToInvitation(false, '<?= $invitation->token ?>', '<?= $organisation->id ?>');
+            respondToInvitation(false, '<?= $invitation->token ?>', null, '<?= $organisation->id ?>');
         });
     </script>
 </body>
