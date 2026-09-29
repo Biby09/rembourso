@@ -91,7 +91,7 @@ function generateAccordionItemContent(repayment, currency, open = false, parentI
                             <div class="row mb-3">
                                 <div class="col-lg-6 d-flex flex-column justify-content-start align-items-start mt-3">
                                     <h4>${repayment.label}</h4>
-                                    <p><strong>Montant :</strong> ${parseInt(repayment.amount).toFixed(2).replace('.', ',')} ${currency}</p>
+                                    <p><strong>Montant :</strong> ${parseFloat(repayment.amount).toFixed(2).replace('.', ',')} ${currency}</p>
                                     ${repayment.category ? `<p><strong>Catégorie :</strong> ${repayment.category.name}</p>` : ''}
                                     ${repayment.subcategory ? `<p><strong>Sous-catégorie :</strong> ${repayment.subcategory.name}</p>` : ''}
                                     <p><strong>Date de l'achat :</strong> ${new Date(repayment.transaction_date.date).toLocaleDateString('fr-FR')}</p>
@@ -381,7 +381,7 @@ async function generateCashierTable(organisationId) {
 
                 const totalPendingCell = document.createElement('td');
                 totalPendingCell.className = 'text-end';
-                totalPendingCell.textContent = `${parseInt(userData.total_pending, 10).toFixed(2).replace('.', ',')} ${result.currency}`;
+                totalPendingCell.textContent = `${parseFloat(userData.total_pending).toFixed(2).replace('.', ',')} ${result.currency}`;
 
                 tr.append(userCell, requestCountCell, totalPendingCell);
                 tbody.appendChild(tr);
@@ -595,7 +595,7 @@ async function generateCashierRepaymentsModal(userId, currency) {
                                 <div class="col-md-4">
                                     ${repayment.category ? `<p><strong>Catégorie&nbsp;:</strong> ${repayment.category.name}</p>` : ''}
                                     ${repayment.subcategory ? `<p><strong>Sous-catégorie&nbsp;:</strong> ${repayment.subcategory.name}</p>` : ''}
-                                    <h6>${parseInt(repayment.amount).toFixed(2).replace('.', ',')} ${currency}</h6>
+                                    <h6>${parseFloat(repayment.amount).toFixed(2).replace('.', ',')} ${currency}</h6>
                                 </div>
                                 <div class="col-md-4 d-flex justify-content-center align-items-center">
                                     ${receiptGalleryPreviewHtml(repayment, 200)}

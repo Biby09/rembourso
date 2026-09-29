@@ -161,7 +161,7 @@ if ($repayment->category !== null) {
         : null;
 }
 
-$repayment->amount = (int) $repayment->amount;
+$repayment->amount = (float) $repayment->amount;
 $repayment->transaction_date = new DateTime($_POST['date']);
 
 try {
