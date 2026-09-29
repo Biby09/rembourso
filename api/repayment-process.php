@@ -173,7 +173,7 @@ if ($input['action'] === 'get_qr') {
     $modalContent .= '            <small class="text-muted">' . htmlspecialchars($client->iban) . '</small>';
     $modalContent .= '            <div class="mt-4 pt-3 border-top">';
     $modalContent .= '                <h6 class="fw-bold">Montant à rembourser</h6>';
-    $modalContent .= '                <h4 class="text-primary">CHF ' . number_format($amount, 2, '.', '\'') . '</h4>';
+    $modalContent .= '                <h4 class="text-primary">' . number_format($amount, 2, ',', ' ') . ' ' . htmlspecialchars($organisation->currency ?? 'CHF') . '</h4>';
     $modalContent .= '            </div>';
     $modalContent .= '        </div>';
     $modalContent .= '        <div class="col-md-6 text-center">';

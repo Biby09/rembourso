@@ -52,6 +52,11 @@ if (!isset($_POST['label'],$_POST['amount'],$_POST['date'])) {
     exit;
 }
 
+if (!is_numeric($_POST['amount']) || (float) $_POST['amount'] <= 0) {
+    echo json_encode(['success' => false, 'error' => 'Invalid amount']);
+    exit;
+}
+
 if ($repayment->category !== null) {
     if (!isset($_POST['category'])) {
         echo json_encode(['success' => false, 'error' => 'Category is required']);
