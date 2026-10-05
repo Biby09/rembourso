@@ -159,6 +159,7 @@ if ($input['action'] === 'get_qr') {
             'message' => 'Données invalides pour la facture QR',
             'violations' => $violations
         ]);
+        log_server_exception($e, 'Erreur lors de la génération du QR Code pour le remboursement');
         exit;
     }
 
@@ -170,7 +171,7 @@ if ($input['action'] === 'get_qr') {
     $modalContent .= '            <p class="mb-0">' . htmlspecialchars($client->refund_first_name . ' ' . $client->refund_last_name) . '</p>';
     $modalContent .= '            <small class="text-muted">' . htmlspecialchars($client->refund_address) . '</small><br>';
     $modalContent .= '            <small class="text-muted">' . htmlspecialchars($client->refund_postal_code) . ' ' . htmlspecialchars($client->refund_city) . '</small><br>';
-    $modalContent .= '            <small class="text-muted">' . htmlspecialchars($client->iban) . '</small>';
+    $modalContent .= '            <small class="text-muted">' . htmlspecialchars(iban_to_human_format($client->iban)) . '</small>';
     $modalContent .= '            <div class="mt-4 pt-3 border-top">';
     $modalContent .= '                <h6 class="fw-bold">Montant à rembourser</h6>';
     $modalContent .= '                <h4 class="text-primary">' . number_format($amount, 2, ',', ' ') . ' ' . htmlspecialchars($organisation->currency ?? 'CHF') . '</h4>';

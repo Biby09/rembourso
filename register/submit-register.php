@@ -2,6 +2,7 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/objects.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -74,6 +75,16 @@ if ($password !== $confirm_password) {
 if (!User::isEmailAvailable($email)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Cet email est déjà utilisé']);
+    exit;
+}
+
+//formatage de l'IBAN
+$iban = iban_to_machine_format($iban);
+
+// Contrôler que l'IBAN est valide
+if (!verify_iban($iban)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'IBAN invalide']);
     exit;
 }
 
