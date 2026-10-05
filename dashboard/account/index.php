@@ -1,6 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/objects.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: /login');
@@ -66,7 +67,8 @@ try {
                                     </div>
                                     <div id="info-perso-message" class="mb-3"></div>
                                     <form class="row g-3" id="info-perso-form">
-                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token()) ?>">
+                                        <input type="hidden" name="csrf_token"
+                                            value="<?= htmlspecialchars(generate_csrf_token()) ?>">
                                         <div class="col-md-6">
                                             <label for="firstName" class="form-label">Prénom</label>
                                             <input type="text" class="form-control" name="firstName" id="firstName"
@@ -130,11 +132,13 @@ try {
                                     </div>
                                     <div id="info-bank-message" class="mb-3"></div>
                                     <form class="row g-3" id="info-bank-form">
-                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token()) ?>">
+                                        <input type="hidden" name="csrf_token"
+                                            value="<?= htmlspecialchars(generate_csrf_token()) ?>">
                                         <div class="col-12">
                                             <label for="iban" class="form-label">IBAN</label>
                                             <input type="text" name="iban" class="form-control" id="iban" disabled
-                                                required value="<?= htmlspecialchars($user->iban) ?>">
+                                                required
+                                                value="<?= htmlspecialchars(iban_to_human_format($user->iban)) ?>">
                                         </div>
                                         <div class="col-12">
                                             <input type="checkbox" name="same-address" id="same-address" disabled
@@ -206,7 +210,8 @@ try {
                                     <h2 class="card-title mb-4">Modifier le mot de passe</h2>
                                     <div id="password-message" class="mb-3"></div>
                                     <form class="row g-3" id="password-form">
-                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token()) ?>">
+                                        <input type="hidden" name="csrf_token"
+                                            value="<?= htmlspecialchars(generate_csrf_token()) ?>">
                                         <div class="col-12">
                                             <label for="currentPassword" class="form-label">Mot de passe actuel</label>
                                             <input type="password" class="form-control" name="currentPassword"
@@ -243,7 +248,8 @@ try {
                                         êtes le seul membre d'une organisation, celle-ci sera également supprimée.
                                     </div>
                                     <form id="delete-account-form">
-                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token()) ?>">
+                                        <input type="hidden" name="csrf_token"
+                                            value="<?= htmlspecialchars(generate_csrf_token()) ?>">
                                         <div class="mb-3">
                                             <label for="confirmEmail" class="form-label">Tapez votre email pour
                                                 confirmer la suppression</label>
@@ -346,20 +352,21 @@ try {
 
         infoBankForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            sendForm(infoBankForm, '/api/update-banking-info.php', {
+            const response = await sendForm(infoBankForm, '/api/update-banking-info.php', {
                 messageContainer: '#info-bank-message',
                 successMessage: 'Informations bancaires mises à jour avec succès.',
                 errorMessage: 'Une erreur est survenue lors de la mise à jour des informations bancaires.',
                 noReset: true
             });
 
-            for (let input of infoBankForm.querySelectorAll('input, select')) {
-                input.disabled = true;
+            if (response.success) {
+                for (let input of infoBankForm.querySelectorAll('input, select')) {
+                    input.disabled = true;
+                }
+                infoBankForm.querySelector('button[type="submit"]').style.display = 'none';
+                document.querySelector('#tab2 .btn-edit').style.display = 'inline-block';
+                document.querySelector('#tab2 .btn-cancel').style.display = 'none';
             }
-            infoBankForm.querySelector('button[type="submit"]').style.display = 'none';
-            document.querySelector('#tab2 .btn-edit').style.display = 'inline-block';
-            document.querySelector('#tab2 .btn-cancel').style.display = 'none';
-
         });
 
         passwordForm.addEventListener('submit', async (e) => {

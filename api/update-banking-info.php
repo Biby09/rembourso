@@ -1,6 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/objects.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 
 if (!userConnected()) {
     header('Content-Type: application/json');
@@ -9,6 +10,17 @@ if (!userConnected()) {
 }
 
 verify_csrf_request(null, true);
+
+// Controler l'iban
+
+if (!isset($_POST['iban']) || !is_string($_POST['iban']) || !verify_iban($_POST['iban'])) {
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'IBAN invalide']);
+    exit();
+}
+
+// Formatage de l'IBAN pour le stockage
+$_POST['iban'] = iban_to_machine_format($_POST['iban']);
 
 try {
     $user = new User($_SESSION['user_id']);
