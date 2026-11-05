@@ -14,7 +14,7 @@
                         <a class="nav-link" href="/about.php">A propos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
+                        <a class="nav-link" href="/contact/">Contact</a>
                     </li>
                 </ul>
                 <?php if (isset($_SESSION['user_id'])): ?>

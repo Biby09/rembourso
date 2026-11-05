@@ -37,6 +37,7 @@ require_once __DIR__ . '/csrf.php';
 require_once __DIR__ . '/rate-limit.php';
 require_once __DIR__ . '/security-headers.php';
 require_once __DIR__ . '/error-handling.php';
+enforce_canonical_url();
 apply_security_headers();
 // Mise à jour du timestamp d'activité
 $_SESSION['last_activity'] = time();

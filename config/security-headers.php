@@ -6,6 +6,38 @@ function request_is_https(): bool
         || (int) ($_SERVER['SERVER_PORT'] ?? 0) === 443;
 }
 
+/**
+ * En production, redirige (301) les variantes d'URL vers l'URL canonique :
+ * http -> https et /index.php -> /, pour éviter le contenu dupliqué côté moteurs de recherche.
+ */
+function enforce_canonical_url(): void
+{
+    if (getenv('APP_ENV') !== 'production' || PHP_SAPI === 'cli' || headers_sent()) {
+        return;
+    }
+
+    $method = strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+    if ($method !== 'GET' && $method !== 'HEAD') {
+        return;
+    }
+
+    $isHttps = request_is_https()
+        || strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+
+    $uri = (string) ($_SERVER['REQUEST_URI'] ?? '/');
+    $path = parse_url($uri, PHP_URL_PATH) ?: '/';
+    $query = parse_url($uri, PHP_URL_QUERY);
+    $canonicalPath = preg_replace('#/index\.php$#', '/', $path);
+
+    if ($isHttps && $canonicalPath === $path) {
+        return;
+    }
+
+    $target = 'https://rembourso.florianlovis.ch' . $canonicalPath . ($query !== null && $query !== '' ? '?' . $query : '');
+    header('Location: ' . $target, true, 301);
+    exit;
+}
+
 function apply_security_headers(): void
 {
     if (headers_sent()) {
