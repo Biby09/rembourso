@@ -1,6 +1,6 @@
-<?php include $_SERVER['DOCUMENT_ROOT'].'/config/session.php'; ?>
-
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php';
+
 session_destroy();
-header("Location: ../login");
-exit();
+header('Location: /login');
+exit;

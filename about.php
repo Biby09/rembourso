@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php';
 $page_title = 'Gestion des remboursements pour associations | Rembourso';
 $page_description = 'Découvrez comment Rembourso aide les associations à gérer les demandes, justificatifs et remboursements.';
 ?>

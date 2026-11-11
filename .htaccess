@@ -1,0 +1,5 @@
+# Modules JavaScript .mjs (pdf.js, /node_modules/pdfjs-dist) : les navigateurs refusent de les exécuter
+# s'ils ne sont pas servis comme JavaScript (anciennes configurations d'Apache sans ce type).
+<IfModule mod_mime.c>
+    AddType text/javascript .mjs
+</IfModule>

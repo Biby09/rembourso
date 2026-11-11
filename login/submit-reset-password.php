@@ -1,70 +1,57 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/objects.php';
+// Nouveau mot de passe choisi depuis le lien de réinitialisation (page login/reset-password.php)
+// POST : token, password, confirm_password
 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/class/passwordReset/passwordResetManager.php';
 
-if (userConnected()) {
-    header('Location: /dashboard');
+header('Content-Type: application/json; charset=utf-8');
+
+/** Réponse d'erreur JSON (les messages s'affichent dans le formulaire) */
+function reset_error(string $message, int $status = 400): never
+{
+    http_response_code($status);
+    echo json_encode(['success' => false, 'message' => $message]);
     exit;
+}
+
+if (isset($_SESSION['user_id'])) {
+    reset_error('Vous êtes déjà connecté.', 403);
 }
 
 verify_csrf_request(null, true);
 
-// Vérification du token
-if (!isset($_POST['token'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Token manquant']);
-    exit;
+$token = $_POST['token'] ?? null;
+if (!is_string($token) || $token === '') {
+    reset_error('Token manquant');
 }
 
 rate_limit_consume('reset_token_ip', $_SERVER['REMOTE_ADDR'] ?? 'unknown', 10, 900);
-rate_limit_consume('reset_token', hash('sha256', $_POST['token']), 5, 3600);
+rate_limit_consume('reset_token', hash('sha256', $token), 5, 3600);
+
+$passwordResetManager = new PasswordResetManager($mysqlClient);
+try {
+    $reset = $passwordResetManager->getResetByToken($token);
+} catch (Exception) {
+    reset_error('Token invalide');
+}
+
+if (!$reset->isValid()) {
+    reset_error('Token expiré');
+}
+
+$password = (string) ($_POST['password'] ?? '');
+if ($password === '' || $password !== ($_POST['confirm_password'] ?? null)) {
+    reset_error('Les mots de passe sont vides ou ne correspondent pas');
+}
 
 try {
-    $passwordReset = new PasswordResetRequest($_POST['token']);
+    $user = $passwordResetManager->resetPassword($reset, $userManager, $password);
 } catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Token invalide']);
-    exit;
+    log_server_exception($e, 'Erreur lors de la réinitialisation du mot de passe');
+    reset_error('Erreur lors de la mise à jour du mot de passe', 500);
 }
 
-if (!$passwordReset->isValid()) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Token expiré']);
-    exit;
-}
-// Verification du mdp et de sa confirmation
-
-if (!isset($_POST['password']) || !isset($_POST['confirm_password'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Tous les champs sont requis']);
-    exit;
-}
-
-if ($_POST['password'] !== $_POST['confirm_password']) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Les mots de passe ne correspondent pas']);
-    exit;
-}
-
-// Récupération de l'utilisateur
-
-try {
-    $user = new User($passwordReset->user_id);
-} catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Utilisateur non trouvé']);
-    exit;
-}
-
-// Mise à jour du mot de passe
-
-if ($passwordReset->use($_POST['password'])) {
-    session_regenerate_id(true);
-    $_SESSION['user_id'] = $user->id;
-    http_response_code(200);
-    echo json_encode(['success' => true, 'message' => 'Mot de passe réinitialisé avec succès', 'redirect' => '/dashboard']);
-} else {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour du mot de passe']);
-}
+session_regenerate_id(true);
+$_SESSION['user_id'] = $user->getId();
+echo json_encode(['success' => true, 'message' => 'Mot de passe réinitialisé avec succès', 'redirect' => '/dashboard']);

@@ -38,6 +38,19 @@ function enforce_canonical_url(): void
     exit;
 }
 
+/**
+ * Retourne un chemin de redirection interne sûr (évite les redirections ouvertes
+ * vers un autre domaine via ?redirect=https://... ou //domaine).
+ */
+function safe_redirect_path(?string $path, string $default = '/dashboard'): string
+{
+    if (!is_string($path) || $path === '' || $path[0] !== '/' || str_starts_with($path, '//') || str_contains($path, '\\')) {
+        return $default;
+    }
+
+    return $path;
+}
+
 function apply_security_headers(): void
 {
     if (headers_sent()) {
@@ -48,7 +61,7 @@ function apply_security_headers(): void
     header('X-Frame-Options: SAMEORIGIN');
     header('Referrer-Policy: strict-origin-when-cross-origin');
     header('Permissions-Policy: camera=(), geolocation=(), microphone=()');
-    header("Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; media-src 'self'");
+    header("Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; media-src 'self'");
 
     if (getenv('APP_ENV') === 'production' && request_is_https()) {
         header('Strict-Transport-Security: max-age=31536000; includeSubDomains');

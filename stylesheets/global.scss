@@ -177,15 +177,8 @@ footer {
     transition: box-shadow 0.3s ease-in-out !important;
 }
 
-/* === FORMULAIRE D'INSCRIPTION MULTI-ETAPES === */
-fieldset[data-step] {
-    display: none;
-}
-
-fieldset[data-step="1"] {
-    display: block;
-}
-
+/* === FORMULAIRE D'INSCRIPTION MULTI-ETAPES ===
+   L'affichage des étapes est géré par la classe d-none (scripts/pages/register.js). */
 .is-invalid {
     border-color: #dc3545 !important;
 }
@@ -195,16 +188,34 @@ fieldset[data-step="1"] {
     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
-/* === NAVIGATION ONGLET RESPONSIVE === */
-// Sur mobile, le select remplace les onglets : on retire la bordure basse du card-header
-// qui n'a plus lieu d'être sans les nav-tabs.
-@media (max-width: 767.98px) {
-    .card-header:has(> #org-tabs-mobile) {
-        border-bottom: none;
-        padding-bottom: 0.75rem;
-    }
+/* === HEADER DE L'APPLICATION (includes/app-header.php, pages avec <body class="app">) === */
+// Logo + sélecteur d'organisation : sur mobile, le sélecteur prend la place libre entre le logo et le burger
+// (nom tronqué « … » s'il est trop long) ; base 0 : le burger reste sur la même ligne quel que soit le nom
+.app-header-start {
+    flex: 1 1 0%;
+    min-width: 0;
 
-    #org-tabs-mobile {
-        font-weight: 500;
+    @include media-breakpoint-up(lg) {
+        flex: 0 1 auto;
     }
+}
+
+.app-org-switch {
+    min-width: 0;
+    flex: 1 1 auto;
+
+    @include media-breakpoint-up(lg) {
+        width: 16rem;
+        flex: 0 0 auto;
+    }
+}
+
+// Bouton rond du menu du compte
+.app-account-button {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

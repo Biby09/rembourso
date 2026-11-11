@@ -1,16 +1,13 @@
 <?php
 /**
- * Bibliothèque pour la génération de confirmation de lot de remboursement en PDF
- * Fournit des fonctions pour récupérer les composants HTML et CSS
+ * Morceaux HTML / CSS du PDF de confirmation d'un lot de remboursement (api/batch/confirmation.php).
+ * Chaque fonction renvoie ['css' => …, 'html' => …] (sauf getCommonCss).
  */
-
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/objects.php';
 
 /**
- * Récupère le CSS commun à tous les éléments
+ * CSS commun à toutes les pages du PDF.
  */
-function getCommonCss()
+function getCommonCss(): string
 {
     return <<<CSS
         html, body {
@@ -43,12 +40,10 @@ function getCommonCss()
 }
 
 /**
- * Récupère le HTML et CSS du header
- * Retourne un array avec 'css' et 'html'
+ * En-tête avec le logo ($logoDataUri : image en data URI, vide si le logo est introuvable).
  */
-function getHeader()
+function getHeader(string $logoDataUri): array
 {
-    global $logoBase64;
     $css = <<<CSS
         header {
             position: absolute;
@@ -67,20 +62,14 @@ function getHeader()
         }
     CSS;
 
-    $html = '<header><img src="' . htmlspecialchars($logoBase64) . '" alt="Logo Rembourso"></header>';
-
-    return [
-        'css' => $css,
-        'html' => $html
-    ];
+    return ['css' => $css, 'html' => '<header><img src="' . e($logoDataUri) . '" alt="Logo Rembourso"></header>'];
 }
 
 /**
- * Récupère le HTML et CSS du footer
+ * Pied de page : qui a généré le document, et quand.
  */
-function getFooter()
+function getFooter(User $author): array
 {
-    global $user;
     $css = <<<CSS
         footer {
             margin-top: 2rem;
@@ -93,21 +82,52 @@ function getFooter()
         }
     CSS;
 
-    $html = '<footer>';
-    $html .= '<hr>';
-    $html .= '<p>Genéré par ' . htmlspecialchars($user->first_name . ' ' . $user->last_name) . ' sur Rembourso le ' . date('d.m.Y') . '</p>';
-    $html .= '</footer>';
+    $html = '<footer><hr><p>Généré par ' . e($author->getFullName()) . ' sur Rembourso le ' . date('d.m.Y') . '</p></footer>';
 
-    return [
-        'css' => $css,
-        'html' => $html
-    ];
+    return ['css' => $css, 'html' => $html];
 }
 
 /**
- * Récupère le HTML et CSS du contenu principal (tableau de remboursements)
+ * Date et heure d'un lot (stockées en UTC) à l'heure suisse : « 11.11.2026 à 18:05 »
  */
-function getMain($batch, $organisation)
+function batch_local_datetime(string $utcDate): string
+{
+    $date = new DateTime($utcDate, new DateTimeZone('UTC'));
+    return $date->setTimezone(new DateTimeZone('Europe/Zurich'))->format('d.m.Y \à H:i');
+}
+
+/**
+ * Nom du pays en français à partir de son code (« CH » → « Suisse ») ; le code tel quel s'il est inconnu.
+ */
+function country_name(?string $code): string
+{
+    try {
+        return $code ? \Symfony\Component\Intl\Countries::getName($code, 'fr') : '';
+    } catch (Exception) {
+        return (string) $code;
+    }
+}
+
+/**
+ * Bloc d'informations « libellé : valeur » (les valeurs vides sont omises).
+ * $rows : [libellé => valeur en texte brut, échappée ici]
+ */
+function info_table(string $title, array $rows, string $note = ''): string
+{
+    $html = '<div class="info-block"><h3>' . e($title) . '</h3><table class="info-table">';
+    foreach ($rows as $label => $value) {
+        if ($value !== null && $value !== '') {
+            $html .= '<tr><th>' . e($label) . '</th><td>' . nl2br(e($value)) . '</td></tr>';
+        }
+    }
+    return $html . '</table>' . ($note ? '<p class="info-note">' . e($note) . '</p>' : '') . '</div>';
+}
+
+/**
+ * Contenu principal : remboursement (lot), bénéficiaire du paiement et tableau des demandes.
+ * $requests : RepaymentRequest[] du lot ; $member : membre à qui appartiennent les demandes (null s'il n'existe plus).
+ */
+function getMain(RepaymentBatch $batch, Organisation $organisation, array $requests, ?User $member): array
 {
     $css = <<<CSS
         main {
@@ -130,11 +150,48 @@ function getMain($batch, $organisation)
             page-break-after: avoid;
         }
 
-        ul {
-            font-size: 14px;
-            margin: 0 0 2rem 0;
-            padding-left: 20px;
-            page-break-after: avoid;
+        .info-blocks {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: avoid;
+        }
+
+        .info-blocks td.info-cell {
+            width: 50%;
+            vertical-align: top;
+            padding: 0 16px 0 0;
+        }
+
+        .info-block h3 {
+            font-size: 15px;
+            margin: 0 0 8px 0;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #367447;
+            color: #367447;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .info-table th {
+            width: 40%;
+            text-align: left;
+            font-weight: bold;
+            padding: 4px 8px 4px 0;
+            vertical-align: top;
+        }
+
+        .info-table td {
+            padding: 4px 0;
+        }
+
+        .info-note {
+            font-size: 11px;
+            color: #888;
+            margin: 6px 0 0 0;
         }
 
         .repayment-table {
@@ -172,126 +229,69 @@ function getMain($batch, $organisation)
         }
     CSS;
 
+    $currency = $organisation->getCurrency();
+    $total = e(format_amount($batch->getTotalAmount(), $currency));
+
+    // Coordonnées de paiement : celles enregistrées à la validation, sinon celles actuelles du membre (anciens lots)
+    if ($batch->hasPayeeSnapshot()) {
+        $payee = [$batch->getPayeeName(), $batch->getPayeeAddress(), $batch->getPayeePostalCode(), $batch->getPayeeCity(), $batch->getPayeeCountry(), $batch->getPayeeIban()];
+        $payeeNote = '';
+    } else {
+        $payee = $member
+            ? [$member->getRefundFullName(), $member->getRefundAddress(), $member->getRefundPostalCode(), $member->getRefundCity(), $member->getRefundCountry(), $member->getIban()]
+            : [$batch->getBeneficiaryName(), '', '', '', '', ''];
+        $payeeNote = "Lot validé avant l'enregistrement des coordonnées de paiement : coordonnées actuelles du membre.";
+    }
+    [$payeeName, $payeeAddress, $payeePostalCode, $payeeCity, $payeeCountry, $payeeIban] = $payee;
+
+    $countLabel = $batch->getAcceptedCount() . ' acceptée' . ($batch->getAcceptedCount() > 1 ? 's' : '');
+    if ($batch->getRejectedCount() > 0) {
+        $countLabel .= ', ' . $batch->getRejectedCount() . ' refusée' . ($batch->getRejectedCount() > 1 ? 's' : '');
+    }
+
+    $repaymentBlock = info_table('Remboursement', [
+        'N° de lot' => (string) $batch->getId(),
+        'Date du remboursement' => batch_local_datetime($batch->getDate()),
+        'Montant remboursé' => format_amount($batch->getTotalAmount(), $currency),
+        'Demandes' => $countLabel,
+        'Organisation' => $organisation->getName(),
+        'Caissier' => $batch->getCashierName(),
+    ]);
+
+    $beneficiaryBlock = info_table('Bénéficiaire', [
+        'Membre' => $member?->getFullName() ?? $batch->getBeneficiaryName(),
+        'E-mail' => $member?->getEmail(),
+        'Payé à' => $payeeName,
+        'Adresse' => trim($payeeAddress . "\n" . trim($payeePostalCode . ' ' . $payeeCity) . "\n" . country_name($payeeCountry)),
+        'IBAN' => $payeeIban ? iban_to_human_format($payeeIban) : '',
+    ], $payeeNote);
+
     $html = '<main>';
     $html .= '<h1>Confirmation de remboursement</h1>';
-    $html .= '<ul>';
-    $html .= '<li>N° de lot : ' . htmlspecialchars($batch->id) . '</li>';
-    $html .= '<li>Date : ' . $batch->date->format('d.m.Y') . '</li>';
-    $html .= '<li>Montant total : ' . htmlspecialchars($batch->getTotalAmount() . ' ' . $organisation->currency) . '</li>';
-    $html .= '<li>Organisation : ' . htmlspecialchars($organisation->name) . '</li>';
-    $html .= '<li>Caissier : ' . htmlspecialchars($batch->cashier->first_name . ' ' . $batch->cashier->last_name) . '</li>';
-    $html .= '<li>Bénéficiaire : ' . htmlspecialchars($batch->getBeneficiary()->first_name . ' ' . $batch->getBeneficiary()->last_name) . '</li>';
-    $html .= '</ul>';
+    $html .= '<table class="info-blocks"><tr><td class="info-cell">' . $repaymentBlock . '</td><td class="info-cell">' . $beneficiaryBlock . '</td></tr></table>';
 
-    $repaymentRequests = $batch->getRepaymentRequests();
-    $html .= '<h2>Remboursement' . (count($repaymentRequests) > 1 ? 's' : '') . '</h2>';
-    $html .= '<table class="repayment-table">';
-    $html .= '<thead>';
-    $html .= '<tr>';
-    $html .= '<th>Index</th>';
-    $html .= '<th>Date de demande</th>';
-    $html .= '<th>Date de l\'achat</th>';
-    $html .= '<th>Libellé</th>';
-    $html .= '<th>Catégorie</th>';
-    $html .= '<th>Sous-catégorie</th>';
-    $html .= '<th>Montant</th>';
-    $html .= '<th>Statut</th>';
-    $html .= '</tr>';
-    $html .= '</thead>';
-    $html .= '<tbody>';
+    $html .= '<h2>Détail des demandes</h2>';
+    $html .= '<table class="repayment-table"><thead><tr>';
+    foreach (['Index', 'Date de demande', "Date de l'achat", 'Libellé', 'Catégorie', 'Sous-catégorie', 'Montant', 'Statut'] as $title) {
+        $html .= '<th>' . e($title) . '</th>';
+    }
+    $html .= '</tr></thead><tbody>';
 
-    $index = 1;
-    foreach ($repaymentRequests as $repayment) {
+    foreach (array_values($requests) as $index => $request) {
         $html .= '<tr>';
-        $html .= '<td>' . $index . '</td>';
-        $html .= '<td>' . $repayment->requested_at->format('Y-m-d') . '</td>';
-        $html .= '<td>' . $repayment->transaction_date->format('Y-m-d') . '</td>';
-        $html .= '<td>' . htmlspecialchars($repayment->label) . '</td>';
-        $html .= '<td>' . htmlspecialchars($repayment->category->name ?? '-') . '</td>';
-        $html .= '<td>' . htmlspecialchars($repayment->subcategory->name ?? '-') . '</td>';
-        $html .= '<td>' . htmlspecialchars($repayment->amount . ' ' . $organisation->currency) . '</td>';
-        $html .= '<td>' . htmlspecialchars($repayment->getStatus()) . '</td>';
+        $html .= '<td>' . ($index + 1) . '</td>';
+        $html .= '<td>' . date('d.m.Y', strtotime($request->getRequestedAt())) . '</td>';
+        $html .= '<td>' . date('d.m.Y', strtotime($request->getTransactionDate())) . '</td>';
+        $html .= '<td>' . e($request->getLabel()) . '</td>';
+        $html .= '<td>' . e($request->getCategoryName() ?? '-') . '</td>';
+        $html .= '<td>' . e($request->getSubcategoryName() ?? '-') . '</td>';
+        $html .= '<td>' . e(format_amount($request->getAmount(), $currency)) . '</td>';
+        $html .= '<td>' . e($request->getStatusLabel()) . '</td>';
         $html .= '</tr>';
-        $index++;
     }
 
-    $html .='<tr><td colspan="6" style="text-align: right; font-weight: bold;">Total</td><td colspan="2" style="font-weight: bold;">' . htmlspecialchars($batch->getTotalAmount() . ' ' . $organisation->currency) . '</td></tr>';
+    $html .= '<tr><td colspan="6" style="text-align: right; font-weight: bold;">Total</td><td colspan="2" style="font-weight: bold;">' . $total . '</td></tr>';
+    $html .= '</tbody></table></main>';
 
-    $html .= '</tbody>';
-    $html .= '</table>';
-    $html .= '</main>';
-
-    return [
-        'css' => $css,
-        'html' => $html
-    ];
+    return ['css' => $css, 'html' => $html];
 }
-
-/**
- * Fonction principale pour générer le HTML complet de confirmation
- * (appelée par get-batch-confirmation.php)
- */
-function getFullConfirmationHtml()
-{
-    global $user;
-    
-    if (!userConnected()) {
-        die('Unauthorized');
-    }
-
-    $user = new User($_SESSION['user_id']);
-    if (!$user) {
-        die('User not found');
-    }
-
-    if (!isset($_GET['batch_id'])) {
-        die('Batch ID is required');
-    }
-
-    $batch = new RepaymentBatch($_GET['batch_id']);
-    if (!$batch) {
-        die('Batch not found');
-    }
-
-    $organisation = new Organisation($batch->organisation_id);
-    if (!$organisation) {
-        die('Organisation not found');
-    }
-
-    // Convertir le logo en base64
-    $logoPath = $_SERVER['DOCUMENT_ROOT'] . '/media/logo.svg';
-    $logoBase64 = '';
-    if (file_exists($logoPath)) {
-        $logoBase64 = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($logoPath));
-    }
-
-
-    // Récupérer les composants
-    $header = getHeader();
-    $main = getMain($batch, $organisation);
-    $footer = getFooter();
-
-    // Construire le HTML complet
-    $html = '<!DOCTYPE html>' . "\n";
-    $html .= '<html lang="fr">' . "\n";
-    $html .= '<head>' . "\n";
-    $html .= '    <meta charset="UTF-8">' . "\n";
-    $html .= '    <meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-    $html .= '    <title>' . $batch->date->format('Y-m-d-H-i-s') . '-rembourso_confirmation</title>' . "\n";
-    $html .= '    <style>' . "\n";
-    $html .= $header['css'] . "\n";
-    $html .= '    </style>' . "\n";
-    $html .= '</head>' . "\n";
-    $html .= '<body>' . "\n";
-    $html .= $header['html'] . "\n";
-    $html .= $main['html'] . "\n";
-    $html .= $footer['html'] . "\n";
-    $html .= '</body>' . "\n";
-    $html .= '</html>';
-
-    return $html;
-}
-
-// Si ce fichier est inclus, on retourne simplement les fonctions 
-// (utilisées par get-batch-confirmation.php)
-?>

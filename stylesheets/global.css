@@ -20302,15 +20302,8 @@ footer {
   transition: box-shadow 0.3s ease-in-out !important;
 }
 
-/* === FORMULAIRE D'INSCRIPTION MULTI-ETAPES === */
-fieldset[data-step] {
-  display: none;
-}
-
-fieldset[data-step="1"] {
-  display: block;
-}
-
+/* === FORMULAIRE D'INSCRIPTION MULTI-ETAPES ===
+   L'affichage des étapes est géré par la classe d-none (scripts/pages/register.js). */
 .is-invalid {
   border-color: #dc3545 !important;
 }
@@ -20320,13 +20313,33 @@ fieldset[data-step="1"] {
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
-/* === NAVIGATION ONGLET RESPONSIVE === */
-@media (max-width: 767.98px) {
-  .card-header:has(> #org-tabs-mobile) {
-    border-bottom: none;
-    padding-bottom: 0.75rem;
+/* === HEADER DE L'APPLICATION (includes/app-header.php, pages avec <body class="app">) === */
+.app-header-start {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+@media (min-width: 992px) {
+  .app-header-start {
+    flex: 0 1 auto;
   }
-  #org-tabs-mobile {
-    font-weight: 500;
+}
+
+.app-org-switch {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+@media (min-width: 992px) {
+  .app-org-switch {
+    width: 16rem;
+    flex: 0 0 auto;
   }
+}
+
+.app-account-button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

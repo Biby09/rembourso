@@ -1,7 +1,8 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/objects.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php';
+
+header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -30,22 +31,16 @@ $emailIdentifier = strtolower(trim($email));
 rate_limit_consume('login_ip', $_SERVER['REMOTE_ADDR'] ?? 'unknown', 10, 900);
 rate_limit_consume('login_email', $emailIdentifier, 5, 900);
 
-$user = null;
-try {
-    $user = new User(null, $email);
-} catch (Exception $exception) {
-    log_server_exception($exception, 'Échec de connexion');
-}
+// E-mail inconnu, personne sans compte ou compte supprimé : même réponse qu'un mauvais mot de passe
+$user = $userManager->findAccountByEmail($email);
 
-if (!$user || !$user->id || !$user->verifyPassword($password) || !$user->active) {
+if (!$user || !$user->isActive() || !$user->verifyPassword($password)) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Identifiants incorrects']);
     exit;
-}else {
-    rate_limit_clear('login_email', $emailIdentifier);
-    session_regenerate_id(true);
-    $_SESSION['user_id'] = $user->id;
-    http_response_code(200);
-    echo json_encode(['success' => true, 'message' => 'Connexion réussie', 'redirect' => isset($_POST['redirect']) ? $_POST['redirect'] : '/dashboard']);
-    exit;
 }
+
+rate_limit_clear('login_email', $emailIdentifier);
+session_regenerate_id(true);
+$_SESSION['user_id'] = $user->getId();
+echo json_encode(['success' => true, 'message' => 'Connexion réussie', 'redirect' => safe_redirect_path($_POST['redirect'] ?? null)]);

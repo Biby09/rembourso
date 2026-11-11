@@ -24,6 +24,19 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `account_claims`
+-- (lien de création de compte envoyé à une personne sans compte)
+--
+
+CREATE TABLE `account_claims` (
+  `idx_user` smallint(5) UNSIGNED NOT NULL,
+  `idx_token` smallint(5) UNSIGNED NOT NULL,
+  `idx_organisation` smallint(5) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `categories`
 --
 
@@ -111,7 +124,13 @@ CREATE TABLE `repayment_batches` (
   `id_batch` smallint(5) UNSIGNED NOT NULL,
   `idx_cashier` smallint(5) UNSIGNED NOT NULL,
   `idx_organisation` smallint(5) UNSIGNED NOT NULL,
-  `batch_date` datetime NOT NULL DEFAULT current_timestamp()
+  `batch_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `batch_payee_name` varchar(130) DEFAULT NULL,
+  `batch_payee_address` varchar(256) DEFAULT NULL,
+  `batch_payee_postal_code` varchar(16) DEFAULT NULL,
+  `batch_payee_city` varchar(64) DEFAULT NULL,
+  `batch_payee_country` varchar(64) DEFAULT NULL,
+  `batch_payee_iban` varchar(64) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -137,6 +156,7 @@ CREATE TABLE `repayment_receipts` (
 CREATE TABLE `repayment_requests` (
   `id_repayment` smallint(5) UNSIGNED NOT NULL,
   `idx_user` smallint(5) UNSIGNED NOT NULL,
+  `idx_created_by` smallint(5) UNSIGNED DEFAULT NULL,
   `idx_organisation` smallint(5) UNSIGNED NOT NULL,
   `idx_category` smallint(5) UNSIGNED DEFAULT NULL,
   `idx_subcategory` smallint(5) UNSIGNED DEFAULT NULL,
@@ -146,6 +166,7 @@ CREATE TABLE `repayment_requests` (
   `rep_transaction_date` date NOT NULL,
   `rep_repayment_date` datetime NOT NULL DEFAULT current_timestamp(),
   `rep_status` enum('0','1','2') NOT NULL,
+  `rep_urgent` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `idx_batch` smallint(5) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -191,16 +212,16 @@ CREATE TABLE `users` (
   `use_city` varchar(64) NOT NULL,
   `use_country` varchar(64) NOT NULL,
   `use_iban` varchar(64) NOT NULL,
-  `use_email` varchar(128) NOT NULL,
-  `use_phone` varchar(32) NOT NULL,
-  `use_password` varchar(512) NOT NULL,
+  `use_email` varchar(128) DEFAULT NULL,
+  `use_password` varchar(512) DEFAULT NULL,
   `use_refund_first_name` varchar(64) NOT NULL,
   `use_refund_last_name` varchar(64) NOT NULL,
   `use_refund_address` varchar(256) NOT NULL,
   `use_refund_postal_code` varchar(16) NOT NULL,
   `use_refund_city` varchar(64) NOT NULL,
   `use_refund_country` varchar(64) NOT NULL,
-  `use_active` tinyint(3) UNSIGNED NOT NULL DEFAULT 1
+  `use_active` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
+  `use_registered` tinyint(1) UNSIGNED NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -218,6 +239,14 @@ CREATE TABLE `users_organisations` (
 --
 -- Index pour les tables déchargées
 --
+
+--
+-- Index pour la table `account_claims`
+--
+ALTER TABLE `account_claims`
+  ADD PRIMARY KEY (`idx_user`,`idx_token`),
+  ADD KEY `acc_token` (`idx_token`),
+  ADD KEY `acc_organisation` (`idx_organisation`);
 
 --
 -- Index pour la table `categories`
@@ -283,6 +312,7 @@ ALTER TABLE `repayment_receipts`
 ALTER TABLE `repayment_requests`
   ADD PRIMARY KEY (`id_repayment`),
   ADD KEY `rep_user` (`idx_user`),
+  ADD KEY `rep_created_by` (`idx_created_by`),
   ADD KEY `rep_organisation` (`idx_organisation`),
   ADD KEY `rep_category` (`idx_category`),
   ADD KEY `rep_subcategory` (`idx_subcategory`),
@@ -385,6 +415,14 @@ ALTER TABLE `users`
 --
 
 --
+-- Contraintes pour la table `account_claims`
+--
+ALTER TABLE `account_claims`
+  ADD CONSTRAINT `acc_organisation` FOREIGN KEY (`idx_organisation`) REFERENCES `organisations` (`id_organisation`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `acc_token` FOREIGN KEY (`idx_token`) REFERENCES `tokens` (`id_token`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `acc_user` FOREIGN KEY (`idx_user`) REFERENCES `users` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Contraintes pour la table `categories`
 --
 ALTER TABLE `categories`
@@ -429,6 +467,7 @@ ALTER TABLE `repayment_receipts`
 -- Contraintes pour la table `repayment_requests`
 --
 ALTER TABLE `repayment_requests`
+  ADD CONSTRAINT `rep_created_by` FOREIGN KEY (`idx_created_by`) REFERENCES `users` (`id_user`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `rep_category` FOREIGN KEY (`idx_category`) REFERENCES `categories` (`id_category`) ON DELETE SET NULL,
   ADD CONSTRAINT `rep_organisation` FOREIGN KEY (`idx_organisation`) REFERENCES `organisations` (`id_organisation`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `rep_subcategory` FOREIGN KEY (`idx_subcategory`) REFERENCES `subcategories` (`id_subcategory`) ON DELETE SET NULL,

@@ -1,105 +1,64 @@
 <?php
+// Inscription (formulaire en 3 étapes, scripts/pages/register.js)
+// POST : first_name, last_name, email, password, confirm_password, address, postal_code, city, country, iban,
+//        same-address (case cochée) ou refund_first_name, refund_last_name, refund_address, refund_postal_code, refund_city, refund_country
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/objects.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php';
 
+header('Content-Type: application/json; charset=utf-8');
+
+/** Réponse d'erreur JSON (les messages s'affichent dans le formulaire) */
+function register_error(string $message, int $status = 400): never
+{
+    http_response_code($status);
+    echo json_encode(['success' => false, 'message' => $message]);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
-    exit;
+    register_error('Méthode non autorisée', 405);
 }
 
 verify_csrf_request(null, true);
 
-//Controler que tous les champs sont présents
-
-if (!isset($_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['password'], $_POST['confirm_password'], $_POST['address'], $_POST['postal_code'], $_POST['city'], $_POST['country'], $_POST['iban'], $_POST['phone'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Tous les champs sont requis']);
-    exit;
+$data = [];
+foreach (['first_name', 'last_name', 'address', 'postal_code', 'city', 'country', 'iban'] as $field) {
+    $data[$field] = trim((string) ($_POST[$field] ?? ''));
 }
 
-if (isset($_POST['same-address'])) {
-    $_POST['refund_first_name'] = $_POST['first_name'];
-    $_POST['refund_last_name'] = $_POST['last_name'];
-    $_POST['refund_address'] = $_POST['address'];
-    $_POST['refund_postal_code'] = $_POST['postal_code'];
-    $_POST['refund_city'] = $_POST['city'];
-    $_POST['refund_country'] = $_POST['country'];
-} else {
-    if (!isset($_POST['refund_first_name'], $_POST['refund_last_name'], $_POST['refund_address'], $_POST['refund_postal_code'], $_POST['refund_city'], $_POST['refund_country'])) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Tous les champs sont requis']);
-        exit;
-    }
+// Bénéficiaire des remboursements : la personne elle-même (case « même adresse ») ou une autre personne
+foreach (['first_name', 'last_name', 'address', 'postal_code', 'city', 'country'] as $field) {
+    $data['refund_' . $field] = isset($_POST['same-address']) ? $data[$field] : trim((string) ($_POST['refund_' . $field] ?? ''));
 }
 
-// Récupérer les données du formulaire
+$email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
+$password = (string) ($_POST['password'] ?? '');
 
-$first_name = trim($_POST['first_name']);
-$last_name = trim($_POST['last_name']);
-$email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-$phone = trim($_POST['phone']);
-$password = $_POST['password'];
-$confirm_password = $_POST['confirm_password'];
-$address = trim($_POST['address']);
-$postal_code = trim($_POST['postal_code']);
-$city = trim($_POST['city']);
-$country = trim($_POST['country']);
-$iban = trim($_POST['iban']);
-$refund_first_name = trim($_POST['refund_first_name']);
-$refund_last_name = trim($_POST['refund_last_name']);
-$refund_address = trim($_POST['refund_address']);
-$refund_postal_code = trim($_POST['refund_postal_code']);
-$refund_city = trim($_POST['refund_city']);
-$refund_country = trim($_POST['refund_country']);
-
-// Contrôler que les champs ne sont pas vides
-
-if (empty($first_name) || empty($last_name) || !$email || empty($password) || empty($confirm_password) || empty($address) || empty($postal_code) || empty($city) || empty($country) || empty($iban) || empty($phone) || empty($refund_first_name) || empty($refund_last_name) || empty($refund_address) || empty($refund_postal_code) || empty($refund_city) || empty($refund_country)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Tous les champs sont requis']);
-    exit;
+if (!$email || $password === '' || in_array('', $data, true)) {
+    register_error('Tous les champs sont requis');
+}
+if ($password !== ($_POST['confirm_password'] ?? null)) {
+    register_error('Les mots de passe ne correspondent pas');
+}
+if (!$userManager->isEmailAvailable($email)) {
+    register_error('Cet email est déjà utilisé');
 }
 
-// Contrôler que les mots de passe correspondent
-if ($password !== $confirm_password) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Les mots de passe ne correspondent pas']);
-    exit;
+// IBAN stocké au format machine (sans espaces)
+$data['iban'] = iban_to_machine_format($data['iban']);
+if (!verify_iban($data['iban'])) {
+    register_error('IBAN invalide');
+}
+$data['email'] = $email;
+
+try {
+    $user = $userManager->createUser($data, $password);
+} catch (Exception $e) {
+    log_server_exception($e, "Erreur lors de l'inscription");
+    register_error("Une erreur est survenue lors de l'inscription. Veuillez réessayer plus tard.", 500);
 }
 
-// Contrôler que l'email n'est pas déjà utilisé
-if (!User::isEmailAvailable($email)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Cet email est déjà utilisé']);
-    exit;
-}
-
-//formatage de l'IBAN
-$iban = iban_to_machine_format($iban);
-
-// Contrôler que l'IBAN est valide
-if (!verify_iban($iban)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'IBAN invalide']);
-    exit;
-}
-
-// Créer l'utilisateur
-
-$user = User::create($last_name, $first_name, $address, $postal_code, $city, $country, $iban, $email, $phone, $password, $refund_last_name, $refund_first_name, $refund_address, $refund_postal_code, $refund_city, $refund_country);
-
-if ($user) {
-    // Connecter l'utilisateur
-    session_regenerate_id(true);
-    $_SESSION['user_id'] = $user->id;
-    http_response_code(200);
-    echo json_encode(['success' => true, 'message' => 'Inscription réussie', 'redirect' => '/dashboard']);
-} else {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer plus tard.']);
-    exit;
-}
+// Connexion directe après l'inscription
+session_regenerate_id(true);
+$_SESSION['user_id'] = $user->getId();
+echo json_encode(['success' => true, 'message' => 'Inscription réussie', 'redirect' => '/dashboard']);

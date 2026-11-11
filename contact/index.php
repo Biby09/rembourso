@@ -1,4 +1,4 @@
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php'; ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php'; ?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -21,7 +21,11 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'; ?>
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-6">
                         <div id="formMessage"></div>
-                        <form id="contactForm">
+                        <form id="contactForm" action="submit-contact.php" method="post" data-ajax-form
+                            data-message-target="#formMessage"
+                            data-loading="Envoi en cours..."
+                            data-success="Votre message a été envoyé avec succès !"
+                            data-error="Une erreur est survenue. Veuillez réessayer plus tard.">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token()) ?>">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nom</label>
@@ -51,20 +55,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'; ?>
         </section>
     </main>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/footer.php'; ?>
-    <script src="/scripts/functions.js"></script>
-    <script>
-        document.getElementById("contactForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            await sendForm(e.target, "submit-contact.php", {
-                messageContainer: "#formMessage",
-                successMessage: "Votre message a été envoyé avec succès !",
-                errorMessage: "Une erreur est survenue. Veuillez réessayer plus tard.",
-                loadingMessage: "Envoi en cours..."
-            });
-
-        });
-    </script>
+    <script type="module" src="/scripts/pages/ajax-forms.js"></script>
 </body>
 
 </html>

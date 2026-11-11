@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "bootstrap": "^5.3.8",
-    "bootstrap-icons": "^1.13.1"
+    "bootstrap-icons": "^1.13.1",
+    "pdfjs-dist": "6.4.299"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^8.0.0",

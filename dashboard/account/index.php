@@ -1,34 +1,27 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/objects.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/auth.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: /login');
-    exit();
-}
-
-try {
-    $user = new User($_SESSION['user_id']);
-} catch (Exception $e) {
-    // En cas d'erreur, redirigez vers la page de connexion
-    session_destroy();
-    header('Location: /login');
-    exit();
-}
+/*
+    Mon compte (/dashboard/account) : informations personnelles, coordonnées bancaires,
+    mot de passe et suppression du compte (scripts/pages/account.js).
+*/
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
-<?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'; ?>
+<?php
+$page_title = 'Mon compte | Rembourso';
+include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
+?>
 
-<body>
-    <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/header.php'; ?>
-    <main class="py-5">
+<body class="app">
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/app-header.php'; ?>
+    <main class="py-4">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <h1 class="mb-4">Mon compte</h1>
+                    <h1 class="fs-3 mb-4">Mon compte</h1>
                     <div class="card">
                         <div class="card-header">
                             <ul class="nav nav-tabs card-header-tabs" role="tablist">
@@ -61,8 +54,8 @@ try {
                                         <div>
                                             <button type="button" class="btn btn-primary btn-edit"
                                                 data-form="info-perso-form">Modifier</button>
-                                            <button type="button" class="btn btn-secondary btn-cancel"
-                                                data-form="info-perso-form" style="display: none;">Annuler</button>
+                                            <button type="button" class="btn btn-secondary btn-cancel d-none"
+                                                data-form="info-perso-form">Annuler</button>
                                         </div>
                                     </div>
                                     <div id="info-perso-message" class="mb-3"></div>
@@ -72,48 +65,42 @@ try {
                                         <div class="col-md-6">
                                             <label for="firstName" class="form-label">Prénom</label>
                                             <input type="text" class="form-control" name="firstName" id="firstName"
-                                                value="<?= htmlspecialchars($user->first_name) ?>" disabled>
+                                                value="<?= htmlspecialchars($user->getFirstName()) ?>" disabled>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="lastName" class="form-label">Nom</label>
                                             <input type="text" class="form-control" name="lastName" id="lastName"
-                                                value="<?= htmlspecialchars($user->last_name) ?>" required disabled>
+                                                value="<?= htmlspecialchars($user->getLastName()) ?>" required disabled>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="email" class="form-label">Email</label>
                                             <input type="email" class="form-control" name="email" id="email"
-                                                value="<?= htmlspecialchars($user->email) ?>" required disabled>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="phone" class="form-label">Téléphone</label>
-                                            <input type="tel" class="form-control" name="phone" id="phone"
-                                                value="<?= htmlspecialchars($user->phone) ?>" required disabled>
+                                                value="<?= htmlspecialchars($user->getEmail()) ?>" required disabled>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="address" class="form-label">Adresse</label>
                                             <input type="text" class="form-control" name="address" id="address"
-                                                value="<?= htmlspecialchars($user->address) ?>" required disabled>
+                                                value="<?= htmlspecialchars($user->getAddress()) ?>" required disabled>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="postalCode" class="form-label">Code postal</label>
                                             <input type="text" class="form-control" name="postalCode" id="postalCode"
-                                                value="<?= htmlspecialchars($user->postal_code) ?>" required disabled>
+                                                value="<?= htmlspecialchars($user->getPostalCode()) ?>" required disabled>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="city" class="form-label">Ville</label>
                                             <input type="text" class="form-control" name="city" id="city"
-                                                value="<?= htmlspecialchars($user->city) ?>" required disabled>
+                                                value="<?= htmlspecialchars($user->getCity()) ?>" required disabled>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="country" class="form-label">Pays</label>
                                             <select name="country" id="country" class="form-control country-select"
-                                                data-country="<?= htmlspecialchars($user->country ?? '') ?>" disabled>
+                                                data-country="<?= htmlspecialchars($user->getCountry() ?? '') ?>" disabled>
                                                 <option value="">Sélectionnez votre pays</option>
                                             </select>
                                         </div>
                                         <div class="col-12">
-                                            <button type="submit" class="btn btn-primary"
-                                                style="display: none;">Enregistrer les modifications</button>
+                                            <button type="submit" class="btn btn-primary d-none">Enregistrer les modifications</button>
                                         </div>
                                     </form>
                                 </div>
@@ -126,8 +113,8 @@ try {
                                         <div>
                                             <button type="button" class="btn btn-primary btn-edit"
                                                 data-form="info-bank-form">Modifier</button>
-                                            <button type="button" class="btn btn-secondary btn-cancel"
-                                                data-form="info-bank-form" style="display: none;">Annuler</button>
+                                            <button type="button" class="btn btn-secondary btn-cancel d-none"
+                                                data-form="info-bank-form">Annuler</button>
                                         </div>
                                     </div>
                                     <div id="info-bank-message" class="mb-3"></div>
@@ -138,21 +125,21 @@ try {
                                             <label for="iban" class="form-label">IBAN</label>
                                             <input type="text" name="iban" class="form-control" id="iban" disabled
                                                 required
-                                                value="<?= htmlspecialchars(iban_to_human_format($user->iban)) ?>">
+                                                value="<?= htmlspecialchars(iban_to_human_format($user->getIban())) ?>">
                                         </div>
                                         <div class="col-12">
                                             <input type="checkbox" name="same-address" id="same-address" disabled
-                                                <?= $user->sameBeneficiary() ? 'checked' : '' ?>>
+                                                <?= $user->hasSameBeneficiary() ? 'checked' : '' ?>>
                                             <label for="same-address">Le bénéficiaire des remboursements est la même
                                                 personne que l'utilisateur</label>
                                         </div>
-                                        <div id="beneficiary-fields" class="row g-3">
+                                        <div id="beneficiary-fields" class="row g-3<?= $user->hasSameBeneficiary() ? ' d-none' : '' ?>">
                                             <div class="col-6">
                                                 <label for="refund_first_name" class="form-label">Prénom du
                                                     bénéficiaire</label>
                                                 <input type="text" name="refund_first_name" class="form-control"
                                                     id="refund_first_name" disabled required
-                                                    value="<?= htmlspecialchars($user->refund_first_name) ?>">
+                                                    value="<?= htmlspecialchars($user->getRefundFirstName()) ?>">
                                             </div>
 
                                             <div class="col-6">
@@ -160,34 +147,34 @@ try {
                                                     bénéficiaire</label>
                                                 <input type="text" name="refund_last_name" class="form-control"
                                                     id="refund_last_name" disabled required
-                                                    value="<?= htmlspecialchars($user->refund_last_name) ?>">
+                                                    value="<?= htmlspecialchars($user->getRefundLastName()) ?>">
                                             </div>
                                             <div class="col-12">
                                                 <label for="refund_address" class="form-label">Adresse du
                                                     bénéficiaire</label>
                                                 <input type="text" name="refund_address" class="form-control"
                                                     id="refund_address" disabled required
-                                                    value="<?= htmlspecialchars($user->refund_address) ?>">
+                                                    value="<?= htmlspecialchars($user->getRefundAddress()) ?>">
                                             </div>
                                             <div class="col-4">
                                                 <label for="refund_postal_code" class="form-label">Code postal du
                                                     bénéficiaire</label>
                                                 <input type="text" name="refund_postal_code" class="form-control"
                                                     id="refund_postal_code" disabled required
-                                                    value="<?= htmlspecialchars($user->refund_postal_code) ?>">
+                                                    value="<?= htmlspecialchars($user->getRefundPostalCode()) ?>">
                                             </div>
                                             <div class="col-4">
                                                 <label for="refund_city" class="form-label">Ville du
                                                     bénéficiaire</label>
                                                 <input type="text" name="refund_city" class="form-control"
                                                     id="refund_city" disabled required
-                                                    value="<?= htmlspecialchars($user->refund_city) ?>">
+                                                    value="<?= htmlspecialchars($user->getRefundCity()) ?>">
                                             </div>
                                             <div class="col-4">
                                                 <label for="refund_country" class="form-label">Pays</label>
                                                 <select name="refund_country" id="refund_country"
                                                     class="form-control country-select"
-                                                    data-country="<?= htmlspecialchars($user->refund_country ?? '') ?>"
+                                                    data-country="<?= htmlspecialchars($user->getRefundCountry() ?? '') ?>"
                                                     disabled>
                                                     <option value="">Sélectionnez votre pays</option>
                                                 </select>
@@ -197,8 +184,7 @@ try {
                                         </div>
 
                                         <div class="col-12">
-                                            <button type="submit" class="btn btn-primary"
-                                                style="display: none;">Enregistrer les
+                                            <button type="submit" class="btn btn-primary d-none">Enregistrer les
                                                 informations bancaires</button>
                                         </div>
                                     </form>
@@ -267,126 +253,8 @@ try {
             </div>
         </div>
     </main>
-    <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/footer.php'; ?>
-    <script src="/scripts/functions.js"></script>
-
-
-    <!-- Script pour initialiser les sélecteurs de pays dans les formulaires d'informations personnelles et bancaires -->
-    <script>
-        const countrySelects = document.querySelectorAll('.country-select');
-        countrySelects.forEach(select => {
-            initCountrySelect(select, select.getAttribute('data-country') || '');
-        });
-    </script>
-
-    <!-- Script pour gérer l'activation/désactivation des champs du formulaire lors de la modification des informations personnelles et bancaires -->
-
-    <script>
-        const editButtons = document.querySelectorAll('.tab-pane .btn-edit');
-        const cancelButtons = document.querySelectorAll('.tab-pane .btn-cancel');
-
-        for (let editButton of editButtons) {
-            editButton.addEventListener('click', () => {
-                const form = document.querySelector('#' + editButton.getAttribute('data-form'));
-                toggleFormEdit(form, true);
-            });
-        }
-
-        for (let cancelButton of cancelButtons) {
-            cancelButton.addEventListener('click', () => {
-                const form = document.querySelector('#' + cancelButton.getAttribute('data-form'));
-                toggleFormEdit(form, false);
-            });
-        }
-    </script>
-
-
-    <!-- Script pour gérer l'affichage des champs du bénéficiaire dans le formulaire d'informations bancaires -->
-    <script>
-        const sameAddressCheckbox = document.getElementById('same-address');
-        const beneficiaryFields = document.getElementById('beneficiary-fields');
-
-        function toggleBeneficiaryFields() {
-            if (sameAddressCheckbox.checked) {
-                beneficiaryFields.style.display = 'none';
-
-                const form = document.getElementById('info-bank-form');
-                const formpersonal = document.getElementById('info-perso-form');
-
-                form.querySelector('input[name="refund_first_name"]').value = formpersonal.querySelector('input[name="firstName"]').value;
-                form.querySelector('input[name="refund_last_name"]').value = formpersonal.querySelector('input[name="lastName"]').value;
-                form.querySelector('input[name="refund_address"]').value = formpersonal.querySelector('input[name="address"]').value;
-                form.querySelector('input[name="refund_postal_code"]').value = formpersonal.querySelector('input[name="postalCode"]').value;
-                form.querySelector('input[name="refund_city"]').value = formpersonal.querySelector('input[name="city"]').value;
-                form.querySelector('select[name="refund_country"]').value = formpersonal.querySelector('select[name="country"]').value;
-            } else {
-                beneficiaryFields.style.display = 'flex';
-            }
-        }
-        sameAddressCheckbox.addEventListener('change', toggleBeneficiaryFields);
-        toggleBeneficiaryFields(); // Appel initial pour définir l'état au chargement de la page 
-    </script>
-
-    <!-- Script pour gérer la soumission des formulaires d'informations personnelles, bancaires, de modification du mot de passe et de suppression du compte -->
-    <script>
-        const infoPersoForm = document.getElementById('info-perso-form');
-        const infoBankForm = document.getElementById('info-bank-form');
-        const passwordForm = document.getElementById('password-form');
-        const deleteAccountForm = document.getElementById('delete-account-form');
-
-        infoPersoForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            sendForm(infoPersoForm, '/api/update-profile.php', {
-                messageContainer: '#info-perso-message',
-                successMessage: 'Informations personnelles mises à jour avec succès.',
-                errorMessage: 'Une erreur est survenue lors de la mise à jour des informations personnelles.',
-                noReset: true
-            });
-            for (let input of infoPersoForm.querySelectorAll('input, select')) {
-                input.disabled = true;
-            }
-            infoPersoForm.querySelector('button[type="submit"]').style.display = 'none';
-            document.querySelector('#tab1 .btn-edit').style.display = 'inline-block';
-            document.querySelector('#tab1 .btn-cancel').style.display = 'none';
-        });
-
-        infoBankForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const response = await sendForm(infoBankForm, '/api/update-banking-info.php', {
-                messageContainer: '#info-bank-message',
-                successMessage: 'Informations bancaires mises à jour avec succès.',
-                errorMessage: 'Une erreur est survenue lors de la mise à jour des informations bancaires.',
-                noReset: true
-            });
-
-            if (response.success) {
-                for (let input of infoBankForm.querySelectorAll('input, select')) {
-                    input.disabled = true;
-                }
-                infoBankForm.querySelector('button[type="submit"]').style.display = 'none';
-                document.querySelector('#tab2 .btn-edit').style.display = 'inline-block';
-                document.querySelector('#tab2 .btn-cancel').style.display = 'none';
-            }
-        });
-
-        passwordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            sendForm(passwordForm, '/api/update-password.php', {
-                messageContainer: '#password-message',
-                successMessage: 'Mot de passe mis à jour avec succès.',
-                errorMessage: 'Une erreur est survenue lors de la mise à jour du mot de passe.',
-            });
-        });
-
-        deleteAccountForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            sendForm(deleteAccountForm, '/api/delete-account.php', {
-                messageContainer: '#delete-message',
-                successMessage: 'Votre compte a été supprimé avec succès.',
-                errorMessage: 'Une erreur est survenue lors de la suppression du compte.',
-            });
-        });
-    </script>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/app-footer.php'; ?>
+    <script type="module" src="/scripts/pages/account.js"></script>
 </body>
 
 

@@ -1,4 +1,4 @@
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php'; ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php'; ?>
 
 <!DOCTYPE html>
 <html lang="fr">

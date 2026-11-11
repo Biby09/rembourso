@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php';
 
 if (isset($_SESSION['user_id'])) {
     header('Location: /dashboard');
@@ -20,7 +20,11 @@ if (isset($_SESSION['user_id'])) {
 
                     <h2 class="text-center mb-4">Connexion</h2>
                     <div id="formMessage"></div>
-                    <form id="loginForm">
+                    <form id="loginForm" action="submit-login.php" method="post" data-ajax-form
+                        data-message-target="#formMessage"
+                        data-loading="Connexion en cours..."
+                        data-success="Vous êtes connecté avec succès !"
+                        data-error="Erreur de connexion. Veuillez vérifier vos identifiants et réessayer.">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token()) ?>">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
@@ -30,7 +34,7 @@ if (isset($_SESSION['user_id'])) {
                             <label for="password" class="form-label">Mot de passe</label>
                             <input type="password" class="form-control" name="password" id="password" placeholder="Votre mot de passe" required>
                         </div>
-                        <input type="hidden" name="redirect" value="<?php echo isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : '/dashboard'; ?>">
+                        <input type="hidden" name="redirect" value="<?= htmlspecialchars(safe_redirect_path($_GET['redirect'] ?? null)) ?>">
                         <button type="submit" class="btn btn-primary w-100">Se connecter</button>
                     </form>
                     <p class="text-center mt-3">
@@ -45,21 +49,7 @@ if (isset($_SESSION['user_id'])) {
         </section>
     </main>
     <?php include '../includes/footer.php'; ?>
-    <script src="/scripts/functions.js"></script>
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            await sendForm(e.target, "submit-login.php", {
-                messageContainer: "#formMessage",
-                successMessage: "Vous êtes connecté avec succès !",
-                errorMessage: "Erreur de connexion. Veuillez vérifier vos identifiants et réessayer.",
-                loadingMessage: "Connexion en cours..."
-            });
-
-        });
-
-    </script>
+    <script type="module" src="/scripts/pages/ajax-forms.js"></script>
 </body>
 
 </html>

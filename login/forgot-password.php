@@ -1,6 +1,6 @@
 <?php
  
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/session.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/init.php';
 if (isset($_SESSION['user_id'])) {
     header('Location: /dashboard');
     exit;
@@ -19,7 +19,11 @@ if (isset($_SESSION['user_id'])) {
 
                     <h2 class="text-center mb-4">Mot de passe oublié</h2>
                     <div id="formMessage"></div>
-                    <form id="forgotPasswordForm">
+                    <form id="forgotPasswordForm" action="submit-forgot-password.php" method="post" data-ajax-form
+                        data-message-target="#formMessage"
+                        data-loading="Envoi en cours..."
+                        data-success="Si un compte existe avec cet email, un lien de réinitialisation a été envoyé."
+                        data-error="Une erreur est survenue. Veuillez réessayer.">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(generate_csrf_token()) ?>">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
@@ -36,20 +40,6 @@ if (isset($_SESSION['user_id'])) {
         </section>
     </main>
     <?php include '../includes/footer.php'; ?>
-    <script src="/scripts/functions.js"></script>
-    <script>
-        document.getElementById("forgotPasswordForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            await sendForm(e.target, "submit-forgot-password.php", {
-                messageContainer: "#formMessage",
-                successMessage: "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.",
-                errorMessage: "Une erreur est survenue. Veuillez réessayer.",
-                loadingMessage: "Envoi en cours..."
-            });
-
-        });
-    </script>
-    
+    <script type="module" src="/scripts/pages/ajax-forms.js"></script>
 </body>
 </html>
