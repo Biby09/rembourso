@@ -11,7 +11,7 @@ $robots_directive = $robots_directive ?? ($private_path ? 'noindex, nofollow' : 
 ?>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="<?= htmlspecialchars(generate_csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
     <meta name="description" content="<?= htmlspecialchars($page_description, ENT_QUOTES, 'UTF-8') ?>">
     <meta name="robots" content="<?= htmlspecialchars($robots_directive, ENT_QUOTES, 'UTF-8') ?>">

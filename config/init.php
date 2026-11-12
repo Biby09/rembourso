@@ -14,7 +14,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config/mail.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/receipts.php';
 
 // Version de l'application, affichée dans les footers (includes/footer.php et includes/app-footer.php)
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '2.0.0';
 
 /**
  * Montant au format suisse : « 1 234,50 CHF »

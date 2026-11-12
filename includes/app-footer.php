@@ -2,11 +2,13 @@
 /*
     Footer de l'application (pages avec includes/app-header.php) : une ligne discrète, à la place du grand footer
     du site public (includes/footer.php). Garde l'accès au contact et aux mentions légales depuis toutes les pages.
+    Grand écran seulement : sur mobile et tablette, ces liens sont dans le panneau « Plus » de la barre du bas
+    (includes/app-bottom-nav.php).
     APP_VERSION : config/init.php
 */
 ?>
 <!-- Pas de classe mt-* : margin-top: auto (global.scss, règle « footer ») pousse le footer en bas des pages courtes -->
-<footer class="app-footer border-top bg-white py-3">
+<footer class="app-footer border-top bg-white py-3 d-none d-xl-block">
     <div class="container">
         <!-- Liste « · » : les éléments passent à la ligne proprement sur un petit écran -->
         <ul class="list-inline small text-muted text-center mb-0">

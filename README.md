@@ -34,7 +34,7 @@ Rembourso est une plateforme web permettant à des organisations (associations, 
 
 ```bash
 git clone <url-du-repo>
-cd rembourso_v1-0-0
+cd rembourso
 composer install
 npm install
 ```

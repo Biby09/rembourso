@@ -4,7 +4,8 @@
     - gauche : logo (→ tableau de bord), sélecteur de l'organisation courante, engrenage des paramètres (administrateurs) ;
     - milieu (grand écran, dès 1200 px) : pages de l'organisation courante, selon le rôle ;
     - droite : menu du compte ;
-    - mobile : menu burger avec les pages, les paramètres et le compte.
+    - mobile et tablette (moins de 1200 px) : logo et organisation en haut, navigation fixée en bas de l'écran
+      (includes/app-bottom-nav.php, incluse à la fin de ce fichier).
     La page doit avoir <body class="app">.
 
     Prérequis : $user et $organisationManager (config/auth.php).
@@ -78,7 +79,7 @@ $appUrl = fn(array $link) => '/dashboard/organisation/' . $link['path'] . '?id='
                 <?php endif; ?>
             </div>
 
-            <!-- Droite : compte (grand écran, dès 1200 px) et burger (mobile). order-xl-last : après les liens du milieu -->
+            <!-- Droite : compte (grand écran, dès 1200 px ; sur mobile, dans la barre du bas). order-xl-last : après les liens du milieu -->
             <div class="d-flex align-items-center gap-2 order-xl-last ms-2">
                 <div class="dropdown d-none d-xl-block">
                     <button class="btn btn-outline-secondary btn-sm rounded-circle app-account-button" type="button"
@@ -95,16 +96,12 @@ $appUrl = fn(array $link) => '/dashboard/organisation/' . $link['path'] . '?id='
                     </ul>
                 </div>
 
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#appNavbarContent"
-                    aria-controls="appNavbarContent" aria-expanded="false" aria-label="Ouvrir le menu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
             </div>
 
-            <!-- Milieu (grand écran, dès 1200 px) / contenu du burger (mobile) -->
+            <!-- Milieu (grand écran, dès 1200 px ; masqué en dessous : barre du bas) -->
             <div class="collapse navbar-collapse" id="appNavbarContent">
                 <?php if ($appLinks): ?>
-                    <ul class="navbar-nav mx-auto mt-3 mt-xl-0 gap-xl-3">
+                    <ul class="navbar-nav mx-auto gap-xl-3">
                         <?php foreach ($appLinks as $link): ?>
                             <li class="nav-item">
                                 <a class="nav-link text-nowrap <?= $appIsActive($link) ? 'active fw-semibold' : '' ?>" href="<?= $appUrl($link) ?>"
@@ -113,20 +110,11 @@ $appUrl = fn(array $link) => '/dashboard/organisation/' . $link['path'] . '?id='
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>
-                <!-- Mobile : paramètres et compte dans le menu -->
-                <ul class="navbar-nav d-xl-none border-top mt-2 pt-2">
-                    <?php if ($appSettings): ?>
-                        <li class="nav-item">
-                            <a class="nav-link <?= $appIsActive($appSettings) ? 'active fw-semibold' : '' ?>" href="<?= $appUrl($appSettings) ?>"><?= e($appSettings['label']) ?></a>
-                        </li>
-                    <?php endif; ?>
-                    <li class="nav-item"><a class="nav-link" href="/dashboard">Tableau de bord</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/dashboard/account">Mon compte</a></li>
-                    <li class="nav-item"><a class="nav-link text-danger" href="/logout">Se déconnecter</a></li>
-                </ul>
             </div>
         </div>
     </nav>
 </header>
+
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/app-bottom-nav.php'; ?>
 
 <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
