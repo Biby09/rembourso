@@ -89,7 +89,7 @@ function token_link(string $token): string
  * Envoie un e-mail. La formule de politesse est ajoutée automatiquement.
  *
  * $message       : texte du message ; une ligne vide sépare deux paragraphes.
- * $replyTo       : adresse de réponse (ex. la personne qui écrit via le formulaire de contact) ; par défaut l'expéditeur.
+ * $replyTo       : adresse de réponse (ex. la personne qui écrit via le formulaire de contact) ; aucune par défaut (expéditeur no-reply).
  * $token         : jeton du lien contenu dans l'e-mail (en clair) ;
  * $loggedMessage : texte enregistré dans la table emails à la place du message.
  * $details       : [libellé => valeur], affichés en tableau (ex. montant, bénéficiaire).
@@ -165,7 +165,9 @@ function send_mail_smtp(array $settings, string $to, string $subject, string $ht
         $mailer->setFrom($settings['from'], $settings['from_name'], false);
         $mailer->Sender = $settings['username'];
         $mailer->addAddress($to);
-        $mailer->addReplyTo($replyTo ?? $settings['from']);
+        if ($replyTo !== null) {
+            $mailer->addReplyTo($replyTo);
+        }
         $mailer->Subject = $subject;
         $mailer->isHTML(true);
         $mailer->Body = $html;
@@ -194,12 +196,12 @@ function send_mail_function(array $settings, string $to, string $subject, string
         . chunk_split(base64_encode($html))
         . "--$boundary--\r\n";
 
-    $headers = implode("\r\n", [
+    $headers = implode("\r\n", array_filter([
         'From: =?UTF-8?B?' . base64_encode($settings['from_name']) . '?= <' . $settings['from'] . '>',
-        'Reply-To: ' . ($replyTo ?? $settings['from']),
+        $replyTo !== null ? 'Reply-To: ' . $replyTo : null,
         'MIME-Version: 1.0',
         "Content-Type: multipart/alternative; boundary=\"$boundary\"",
-    ]);
+    ]));
     // Sujet encodé (=?UTF-8?B?…?=) : les accents s'affichent correctement dans les messageries
     $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
