@@ -69,7 +69,6 @@ et un mot de passe sont configurés ; sinon, par la fonction `mail()` de PHP (ex
 | `MAIL_HOST`, `MAIL_PORT` | Serveur SMTP (par défaut `mail.infomaniak.com`, 465) |
 
 En cas d'échec, la raison est écrite dans le journal d'erreurs PHP (`sendMail : échec…`).
-Test depuis un terminal (le mot de passe est saisi sans s'afficher) : voir `tools/test-mail.php`.
 
 ### Compilation des styles
 

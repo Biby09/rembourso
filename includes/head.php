@@ -6,7 +6,7 @@ $page_description = $page_description ?? 'Rembourso simplifie la gestion des dem
 // /index.php et / sont la même page : la canonical doit toujours pointer vers le dossier.
 $canonical_path = preg_replace('#/index\.php$#', '/', $request_path);
 $canonical_url = $canonical_url ?? 'https://rembourso.florianlovis.ch' . $canonical_path;
-$private_path = preg_match('#^/(api|dashboard|invitation|logout|login|register)(/|$)|^/token\.php$#', $request_path) === 1;
+$private_path = preg_match('#^/(account-claim|api|dashboard|invitation|logout|login|register)(/|$)|^/token\.php$#', $request_path) === 1;
 $robots_directive = $robots_directive ?? ($private_path ? 'noindex, nofollow' : 'index, follow');
 ?>
 <head>

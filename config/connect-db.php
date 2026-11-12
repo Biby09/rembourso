@@ -1,6 +1,6 @@
 <?php
 
-if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '192.168.1.101') {
+if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '192.168.1.101' || $_SERVER['SERVER_NAME'] === '10.229.56.46') {
     $MYSQL_HOST = 'localhost';
     $MYSQL_PORT = 3306;
     $MYSQL_NAME = 'db_rembourso';
