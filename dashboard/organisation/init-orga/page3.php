@@ -9,7 +9,7 @@
     <li><strong>Administrateur</strong> : gère aussi les membres et les paramètres de l'organisation.</li>
 </ul>
 <p class="text-muted">Une personne sans compte ? Un caissier pourra saisir ses demandes pour elle, puis lui envoyer
-    un lien pour créer son compte (page « À rembourser »).</p>
+    une invitation à créer son compte (pages « À rembourser » et « Membres »).</p>
 
 <h2 class="fs-5 mt-4">Invitations envoyées</h2>
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/invitation-setup.php'; ?>

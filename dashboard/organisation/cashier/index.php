@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config/organisation-page.php';
     « À rembourser » (/dashboard/organisation/cashier/?id=…), caissiers et administrateurs :
     - membres ayant des demandes en attente : acceptation / refus, QR-facture puis validation du paiement
       (scripts/pages/organisation/cashier.js) ;
-    - personnes sans compte : modification et envoi du lien de création de compte (scripts/pages/organisation/accountless.js).
+    - personnes sans compte : modification et envoi de l'invitation à créer leur compte (scripts/pages/organisation/accountless.js).
 */
 ?>
 <!DOCTYPE html>
@@ -32,7 +32,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
         <section>
             <h2 class="fs-4">Personnes sans compte</h2>
             <p class="text-muted">Personnes pour lesquelles une demande a été saisie par un caissier.
-                Envoyez-leur un lien pour qu'elles créent leur compte et suivent leurs remboursements.</p>
+                Envoyez-leur une invitation pour qu'elles créent leur compte et suivent leurs remboursements.</p>
             <!-- Rempli par scripts/pages/organisation/accountless.js -->
             <div id="accountless-container"></div>
         </section>

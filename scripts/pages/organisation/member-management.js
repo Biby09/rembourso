@@ -6,6 +6,7 @@ import { api } from '../../core/api.js';
 import { $, dataNumber, delegate, html, setHtml, setVisible } from '../../core/dom.js';
 import { errorMessage } from '../../core/http.js';
 import { confirmAction, hideModal, notify, showModal, withButtonLoading } from '../../core/ui.js';
+import { CLAIM_AGAIN_LABEL, sendClaimInvitation } from './account-claim.js';
 
 const ROLE_LABELS = { member: 'Membre', cashier: 'Caissier', admin: 'Administrateur' };
 
@@ -153,8 +154,25 @@ function initAddMemberDialog(organisationId, reloadInvitations) {
     });
 }
 
+// ---------------------------------------------------------------------------
+// Personnes sans compte : invitation à créer leur compte
+// ---------------------------------------------------------------------------
+
+function initClaimInvitations(organisationId) {
+    const table = $('#members-table');
+    if (!table) return;
+
+    delegate(table, 'click', '[data-action="send-claim"]', async (event, button) => {
+        const row = button.closest('tr');
+        if (await sendClaimInvitation(organisationId, dataNumber(row, 'memberId'), row.dataset.memberEmail, button)) {
+            button.textContent = CLAIM_AGAIN_LABEL;
+        }
+    });
+}
+
 export function initMembers({ organisationId }) {
     initMemberDialog(organisationId);
+    initClaimInvitations(organisationId);
     const reloadInvitations = initInvitations(organisationId);
     initAddMemberDialog(organisationId, reloadInvitations);
 }

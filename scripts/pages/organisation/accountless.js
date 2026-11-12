@@ -1,6 +1,6 @@
 /**
  * Onglet caissier, section « Personnes sans compte » : bénéficiaires saisis par un caissier.
- * Modification de leurs informations et envoi du lien de création de compte.
+ * Modification de leurs informations et envoi de l'invitation à créer leur compte (account-claim.js).
  */
 import { initCountrySelects } from '../../components/country-select.js';
 import { fillPersonFields, readPersonFields } from '../../components/person-fields.js';
@@ -9,15 +9,7 @@ import { $, dataNumber, delegate, html, setHtml } from '../../core/dom.js';
 import { formatDate } from '../../core/format.js';
 import { errorMessage } from '../../core/http.js';
 import { clearAlert, hideModal, notify, showAlert, showModal, withButtonLoading } from '../../core/ui.js';
-
-function claimButtonHtml(person) {
-    if (!person.email) {
-        return html`<button type="button" class="btn btn-sm btn-outline-primary" disabled
-            title="Renseignez l'adresse e-mail pour envoyer le lien">Envoyer le lien</button>`;
-    }
-    return html`<button type="button" class="btn btn-sm btn-outline-primary" data-action="send-claim">
-        ${person.last_claim_sent_at ? 'Renvoyer le lien' : 'Envoyer le lien'}</button>`;
-}
+import { claimButtonHtml, sendClaimInvitation } from './account-claim.js';
 
 function accountlessHtml(result) {
     if (!result.success) {
@@ -34,7 +26,7 @@ function accountlessHtml(result) {
                     <tr>
                         <th>Nom</th>
                         <th>E-mail</th>
-                        <th>Lien envoyé le</th>
+                        <th>Invitation envoyée le</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -46,7 +38,7 @@ function accountlessHtml(result) {
                             <td>${person.last_claim_sent_at ? formatDate(person.last_claim_sent_at) : '—'}</td>
                             <td class="text-end text-nowrap">
                                 <button type="button" class="btn btn-sm btn-outline-secondary me-1" data-action="edit">Modifier</button>
-                                ${claimButtonHtml(person)}
+                                ${claimButtonHtml({ email: person.email, alreadySent: Boolean(person.last_claim_sent_at) })}
                             </td>
                         </tr>`)}
                 </tbody>
@@ -97,17 +89,13 @@ export function initAccountless({ organisationId }) {
         });
     });
 
-    // --- Lien de création de compte
-    delegate(container, 'click', '[data-action="send-claim"]', (event, button) => withButtonLoading(button, 'Envoi...', async () => {
+    // --- Invitation à créer son compte
+    delegate(container, 'click', '[data-action="send-claim"]', async (event, button) => {
         const person = people.get(dataNumber(button.closest('tr'), 'personId'));
-        const result = await api.sendAccountClaim(organisationId, person.id);
-        if (!result.success) {
-            notify(errorMessage(result, "Impossible d'envoyer le lien."));
-            return;
+        if (await sendClaimInvitation(organisationId, person.id, person.email, button)) {
+            reload(); // date d'envoi et « Renvoyer l'invitation »
         }
-        notify(`Lien de création de compte envoyé à ${person.email}.`);
-        reload();
-    }));
+    });
 
     reload();
 }

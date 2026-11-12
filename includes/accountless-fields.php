@@ -50,6 +50,6 @@ $formAttr = $personFormId ? ' form="' . htmlspecialchars($personFormId, ENT_QUOT
     <div class="mb-3 col-md-6">
         <label for="<?= $fieldId('email') ?>" class="form-label">E-mail <span class="text-muted">(facultatif)</span></label>
         <input type="email" class="form-control" id="<?= $fieldId('email') ?>" <?= $formAttr ?> name="person[email]" maxlength="128">
-        <small class="text-muted">Nécessaire pour lui envoyer un lien de création de compte.</small>
+        <small class="text-muted">Nécessaire pour lui envoyer une invitation à créer son compte.</small>
     </div>
 </div>

@@ -12,7 +12,7 @@
     <div class="container">
         <!-- Liste « · » : les éléments passent à la ligne proprement sur un petit écran -->
         <ul class="list-inline small text-muted text-center mb-0">
-            <li class="list-inline-item">© <?= date('Y') ?> Rembourso</li>
+            <li class="list-inline-item">© <?= date('Y') ?> Florian Lovis</li>
             <li class="list-inline-item">Version <?= e(APP_VERSION) ?></li>
             <li class="list-inline-item"><a href="/contact/" class="link-secondary">Contact</a></li>
             <li class="list-inline-item"><a href="/mentions-legales.php" class="link-secondary">Mentions légales</a></li>
