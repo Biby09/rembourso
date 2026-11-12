@@ -55,7 +55,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'; ?>
         </section>
     </main>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/footer.php'; ?>
-    <script type="module" src="/scripts/pages/ajax-forms.js"></script>
+    <script type="module" src="<?= asset('/scripts/pages/ajax-forms.js') ?>"></script>
 </body>
 
 </html>

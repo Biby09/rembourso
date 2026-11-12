@@ -117,4 +117,4 @@ $appUrl = fn(array $link) => '/dashboard/organisation/' . $link['path'] . '?id='
 
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/app-bottom-nav.php'; ?>
 
-<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= asset('/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') ?>"></script>

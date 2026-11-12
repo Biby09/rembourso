@@ -44,7 +44,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/includes/modals/accountless-modal.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/includes/app-footer.php';
     ?>
-    <script type="module" src="/scripts/pages/organisation/cashier.js"></script>
+    <script type="module" src="<?= asset('/scripts/pages/organisation/cashier.js') ?>"></script>
 </body>
 
 </html>

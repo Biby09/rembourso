@@ -94,7 +94,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/includes/modals/member-modals.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/includes/app-footer.php';
     ?>
-    <script type="module" src="/scripts/pages/organisation/init-orga.js"></script>
+    <script type="module" src="<?= asset('/scripts/pages/organisation/init-orga.js') ?>"></script>
 </body>
 
 </html>

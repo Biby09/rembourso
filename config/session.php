@@ -3,6 +3,7 @@
 const SESSION_LIFETIME = 3600 * 12;
 
 require_once __DIR__ . '/security-headers.php';
+require_once __DIR__ . '/assets.php';
 
 ini_set('session.use_strict_mode', '1');
 ini_set('session.use_only_cookies', '1');

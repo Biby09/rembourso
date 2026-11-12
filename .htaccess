@@ -12,3 +12,12 @@
 
 # Dépôt git (si le site est déployé avec git clone / git pull)
 RedirectMatch 404 /\.git(/|$)
+
+# CSS et JavaScript : le navigateur garde sa copie mais demande au serveur si elle est à jour avant de la réutiliser
+# (réponse 304 sans contenu si rien n'a changé). Évite qu'un ancien script ou style soit utilisé après une mise à jour,
+# y compris pour les modules importés par d'autres modules (sans ?v=, voir config/assets.php).
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|mjs|css)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>

@@ -70,7 +70,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
     </main>
 
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/app-footer.php'; ?>
-    <script type="module" src="/scripts/pages/invitation.js"></script>
+    <script type="module" src="<?= asset('/scripts/pages/invitation.js') ?>"></script>
 </body>
 
 </html>

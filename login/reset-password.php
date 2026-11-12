@@ -65,7 +65,7 @@ if ($token === '') {
         </section>
     </main>
     <?php include '../includes/footer.php'; ?>
-    <script type="module" src="/scripts/pages/ajax-forms.js"></script>
+    <script type="module" src="<?= asset('/scripts/pages/ajax-forms.js') ?>"></script>
 </body>
 
 </html>

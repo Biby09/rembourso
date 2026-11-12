@@ -30,7 +30,7 @@ $robots_directive = $robots_directive ?? ($private_path ? 'noindex, nofollow' : 
     <meta name="twitter:title" content="<?= htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8') ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($page_description, ENT_QUOTES, 'UTF-8') ?>">
 
-    <link rel="stylesheet" href="/stylesheets/global.min.css">
+    <link rel="stylesheet" href="<?= asset('/stylesheets/global.min.css') ?>">
     <link rel="apple-touch-icon" sizes="180x180" href="/media/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/media/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/media/favicon/favicon-16x16.png">

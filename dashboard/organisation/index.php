@@ -120,7 +120,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
     }
     include $_SERVER['DOCUMENT_ROOT'] . '/includes/app-footer.php';
     ?>
-    <script type="module" src="/scripts/pages/organisation/submit.js"></script>
+    <script type="module" src="<?= asset('/scripts/pages/organisation/submit.js') ?>"></script>
 </body>
 
 </html>

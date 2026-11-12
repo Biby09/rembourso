@@ -168,7 +168,7 @@ if (isset($_SESSION['user_id'])) {
         </section>
     </main>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/footer.php'; ?>
-    <script type="module" src="/scripts/pages/register.js"></script>
+    <script type="module" src="<?= asset('/scripts/pages/register.js') ?>"></script>
 </body>
 
 </html>
