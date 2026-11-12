@@ -52,6 +52,24 @@ En production, la configuration passe par les variables d'environnement suivante
 | `DB_NAME`     | Nom de la base de données      |
 | `DB_USER`     | Utilisateur de la base         |
 | `DB_PASSWORD` | Mot de passe de la base        |
+| `APP_URL`     | Adresse du site, pour les liens des e-mails (ex. `https://dev.rembourso.florianlovis.ch` sur le site de développement ; par défaut l'adresse de production) |
+| `APP_ENV`     | `production` sur le site de production uniquement (redirection HTTPS, HSTS) |
+
+### E-mails
+
+Les e-mails partent en SMTP authentifié (PHPMailer, serveur `mail.infomaniak.com`, port 465) dès qu'un identifiant
+et un mot de passe sont configurés ; sinon, par la fonction `mail()` de PHP (ex. en local).
+
+| Variable         | Description |
+|------------------|-------------|
+| `MAIL_USERNAME`  | Boîte mail Infomaniak utilisée pour se connecter (adresse complète) |
+| `MAIL_PASSWORD`  | Son mot de passe |
+| `MAIL_FROM`      | Expéditeur affiché : cette boîte ou l'un de ses alias (par défaut `noreply@florianlovis.ch`) |
+| `MAIL_FROM_NAME` | Nom affiché (par défaut « Rembourso ») |
+| `MAIL_HOST`, `MAIL_PORT` | Serveur SMTP (par défaut `mail.infomaniak.com`, 465) |
+
+En cas d'échec, la raison est écrite dans le journal d'erreurs PHP (`sendMail : échec…`).
+Test depuis un terminal (le mot de passe est saisi sans s'afficher) : voir `tools/test-mail.php`.
 
 ### Compilation des styles
 

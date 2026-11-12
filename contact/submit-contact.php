@@ -27,6 +27,6 @@ rate_limit_consume('contact_ip', $_SERVER['REMOTE_ADDR'] ?? 'unknown', 5, 3600);
 
 // « Répondre » dans la messagerie écrit directement à la personne
 $success = sendMail('webmaster@florianlovis.ch', 'Contact : ' . $subject, "Nouveau message reçu depuis le formulaire de contact :\n\n" . $message,
-    "Reply-To: $email", details: ['Nom' => $name !== '' ? $name : '—', 'E-mail' => $email, 'Objet' => $subject]);
+    replyTo: $email, details: ['Nom' => $name !== '' ? $name : '—', 'E-mail' => $email, 'Objet' => $subject]);
 
 echo json_encode(['success' => (bool) $success]);
