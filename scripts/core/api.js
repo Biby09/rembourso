@@ -22,8 +22,6 @@ export const api = {
         postJson(endpoint('organisation/update-settings'), { organisation_id: organisationId, setting, value }),
 
     // --- Demandes de remboursement
-    getMyRepayments: (organisationId, page) =>
-        postJson(endpoint('repayment/get-requests'), { organisation_id: organisationId, page }),
     getMemberPendingRepayments: (organisationId, memberId) =>
         postJson(endpoint('repayment/get-requests'), { organisation_id: organisationId, memberId }),
     getRepaymentEditDialog: repaymentId => postJsonForHtml(endpoint('repayment/edit-dialog'), { repayment_id: repaymentId }),

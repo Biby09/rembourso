@@ -4,7 +4,7 @@
  * (accepter / refuser, QR-code de paiement, validation).
  */
 import { initReceiptGallery, receiptPreviewHtml } from '../../components/receipt-gallery.js';
-import { urgentBadgeHtml } from '../../components/repayment-accordion.js';
+import { urgentBadgeHtml } from '../../components/repayment-badges.js';
 import { api } from '../../core/api.js';
 import { $, $$, dataNumber, delegate, html, raw, setHtml, toElement } from '../../core/dom.js';
 import { formatAmount, formatDate } from '../../core/format.js';

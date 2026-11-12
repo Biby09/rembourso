@@ -284,15 +284,17 @@ class RepaymentRequestManager
     {
         $currency = $this->organisation->getCurrency();
         $subject = 'Demande de remboursement urgente – ' . $this->organisation->getName();
-        $message = $this->user->getFullName() . " a marqué une demande de remboursement comme urgente.\n\n"
-            . 'Libellé : ' . $request->getLabel() . "\n"
-            . 'Bénéficiaire : ' . $request->getBeneficiaryName() . "\n"
-            . 'Montant : ' . format_amount($request->getAmount(), $currency) . "\n"
-            . "Date de l'achat : " . format_date($request->getTransactionDate()) . "\n\n"
-            . "Pour la traiter :\n" . $_SERVER['SERVER_NAME'] . '/dashboard/organisation/cashier/?id=' . $this->organisation->getId();
+        $message = $this->user->getFullName() . ' a marqué une demande de remboursement comme urgente dans ' . $this->organisation->getName() . '.';
+        $details = [
+            'Libellé' => $request->getLabel(),
+            'Bénéficiaire' => $request->getBeneficiaryName(),
+            'Montant' => format_amount($request->getAmount(), $currency),
+            "Date de l'achat" => format_date($request->getTransactionDate()),
+        ];
+        $action = ['label' => 'Traiter la demande', 'url' => app_url('/dashboard/organisation/cashier/?id=' . $this->organisation->getId())];
 
         foreach ($recipients as $email) {
-            sendMail($email, $subject, $message);
+            sendMail($email, $subject, $message, details: $details, action: $action);
         }
     }
 

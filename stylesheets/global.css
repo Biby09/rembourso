@@ -20318,7 +20318,7 @@ footer {
   flex: 1 1 0%;
   min-width: 0;
 }
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
   .app-header-start {
     flex: 0 1 auto;
   }
@@ -20328,9 +20328,9 @@ footer {
   min-width: 0;
   flex: 1 1 auto;
 }
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
   .app-org-switch {
-    width: 16rem;
+    width: 14rem;
     flex: 0 0 auto;
   }
 }

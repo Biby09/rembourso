@@ -145,6 +145,20 @@ class OrganisationManager
     }
 
     /**
+     * Devise des demandes de l'organisation (une clé de Organisation::CURRENCIES).
+     */
+    public function setCurrency(Organisation $organisation, string $currency): Organisation
+    {
+        if (!isset(Organisation::CURRENCIES[$currency])) {
+            throw new InvalidArgumentException('Unsupported currency: ' . $currency);
+        }
+        $this->pdo->prepare('UPDATE organisations SET org_currency = :currency WHERE id_organisation = :id')
+            ->execute(['currency' => $currency, 'id' => $organisation->getId()]);
+
+        return $this->getOrganisationById($organisation->getId());
+    }
+
+    /**
      * Active ou désactive les catégories. Les désactiver désactive aussi les sous-catégories.
      */
     public function setCategoriesEnabled(Organisation $organisation, bool $enabled): Organisation

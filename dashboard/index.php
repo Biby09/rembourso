@@ -36,57 +36,15 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
                             <p class="card-text text-muted mb-0">Vous n'avez aucune demande de remboursement.</p>
                         <?php else: ?>
                             <div class="accordion mt-3" id="accordion-repayment">
-                                <?php foreach ($latestRequests as $request): ?>
-                                    <?php $collapseId = 'repayment-' . $request->getId() . '-collapse'; ?>
-                                    <div class="accordion-item">
-                                        <h3 class="accordion-header">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#<?= $collapseId ?>" aria-expanded="false" aria-controls="<?= $collapseId ?>">
-                                                <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/repayment-status-badge.php'; ?>
-                                                <?= e($request->getLabel()) ?>
-                                            </button>
-                                        </h3>
-                                        <div id="<?= $collapseId ?>" class="accordion-collapse collapse" data-bs-parent="#accordion-repayment">
-                                            <div class="accordion-body container">
-                                                <div class="row">
-                                                    <div class="col-lg-6 mt-3">
-                                                        <h4><?= e($request->getLabel()) ?></h4>
-                                                        <h5 class="text-muted mb-3"><?= e($request->getOrganisationName()) ?></h5>
-                                                        <p><strong>Montant :</strong> <?= e(format_amount($request->getAmount(), $request->getCurrency())) ?></p>
-                                                        <?php if ($request->getCategoryName()): ?>
-                                                            <p><strong>Catégorie :</strong> <?= e($request->getCategoryName()) ?></p>
-                                                        <?php endif; ?>
-                                                        <?php if ($request->getSubcategoryName()): ?>
-                                                            <p><strong>Sous-catégorie :</strong> <?= e($request->getSubcategoryName()) ?></p>
-                                                        <?php endif; ?>
-                                                        <?php if ($request->getCreatedByName()): ?>
-                                                            <p><strong>Saisie par :</strong> <?= e($request->getCreatedByName()) ?></p>
-                                                        <?php endif; ?>
-                                                        <p><strong>Date de l'achat :</strong> <?= e(format_date($request->getTransactionDate())) ?></p>
-                                                        <p><strong>Date de dépôt de la demande :</strong> <?= e(format_date($request->getRequestedAt())) ?></p>
-                                                        <?php if ($request->getBatchDate()): ?>
-                                                            <p><strong>Date de traitement :</strong> <?= e(format_date($request->getBatchDate())) ?></p>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                    <div class="col-lg-6 d-flex justify-content-center">
-                                                        <div class="text-center">
-                                                            <?php if ($request->getReceiptCount() > 1): ?>
-                                                                <button type="button" class="btn btn-link btn-sm p-0 mb-2 receipt-gallery-trigger"
-                                                                    data-repayment-id="<?= $request->getId() ?>" data-receipt-count="<?= $request->getReceiptCount() ?>">Voir les autres quittances (<?= $request->getReceiptCount() ?>)</button>
-                                                            <?php endif; ?>
-                                                            <button type="button" class="receipt-gallery-trigger border-0 bg-transparent p-0"
-                                                                data-repayment-id="<?= $request->getId() ?>" data-receipt-count="<?= $request->getReceiptCount() ?>">
-                                                                <img class="receipt_image mw-100" style="max-height: 400px; object-fit: contain;"
-                                                                    src="/api/repayment/get-receipt.php?repayment_id=<?= $request->getId() ?>&amp;receipt_index=0"
-                                                                    alt="Quittance" loading="lazy">
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
+                                <?php
+                                $accordionId = 'accordion-repayment';
+                                $currentUserId = $user->getId();
+                                $showOrganisation = true;
+                                foreach ($latestRequests as $request) {
+                                    $currency = $request->getCurrency();
+                                    include $_SERVER['DOCUMENT_ROOT'] . '/includes/repayment-item.php';
+                                }
+                                ?>
                             </div>
                         <?php endif; ?>
                     </div>

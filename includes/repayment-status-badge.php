@@ -2,7 +2,7 @@
 /*
     Badge du statut d'une demande (En attente / Acceptée / Refusée), suivi du badge « Urgent » si la demande
     est urgente et encore en attente.
-    Même rendu que repaymentStatus() de scripts/components/repayment-accordion.js.
+    Badge « Urgent » identique à urgentBadgeHtml() de scripts/components/repayment-badges.js (page « À rembourser »).
     Prérequis : $request (RepaymentRequest).
 */
 $statusColor = [RepaymentRequest::STATUS_PENDING => 'warning', RepaymentRequest::STATUS_ACCEPTED => 'success'][$request->getStatus()] ?? 'danger';

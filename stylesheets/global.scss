@@ -195,7 +195,8 @@ footer {
     flex: 1 1 0%;
     min-width: 0;
 
-    @include media-breakpoint-up(lg) {
+    // xl : le menu complet (jusqu'à 5 liens pour un administrateur) ne tient sur une ligne qu'à partir de 1200 px
+    @include media-breakpoint-up(xl) {
         flex: 0 1 auto;
     }
 }
@@ -204,8 +205,8 @@ footer {
     min-width: 0;
     flex: 1 1 auto;
 
-    @include media-breakpoint-up(lg) {
-        width: 16rem;
+    @include media-breakpoint-up(xl) {
+        width: 14rem;
         flex: 0 0 auto;
     }
 }

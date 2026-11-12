@@ -21,11 +21,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/app-header.php'; ?>
 
     <main class="container py-4" id="organisation-page" data-organisation-id="<?= $organisation->getId() ?>" data-organisation-name="<?= e($organisation->getName()) ?>">
-        <?php
-        $heading = 'Membres';
-        $headingAction = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberDialog">+ Inviter un utilisateur</button>';
-        include $_SERVER['DOCUMENT_ROOT'] . '/includes/page-heading.php';
-        ?>
+        <?php $heading = 'Membres'; include $_SERVER['DOCUMENT_ROOT'] . '/includes/page-heading.php'; ?>
 
         <div class="card mb-5">
             <div class="card-body">
@@ -64,8 +60,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
 
         <section>
             <h2 class="fs-4 mb-3">Invitations en cours</h2>
-            <!-- Rempli par scripts/pages/organisation/members.js -->
-            <div id="invitations-container"></div>
+            <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/invitation-setup.php'; ?>
         </section>
     </main>
 

@@ -7,6 +7,7 @@ import { errorMessage } from '../../core/http.js';
 import { clearAlert, showAlert, withButtonLoading } from '../../core/ui.js';
 import { initCategories } from './categories.js';
 import { organisationContext } from './context.js';
+import { initCurrency } from './currency.js';
 
 const MESSAGE_TIMEOUT = 4000;
 
@@ -74,4 +75,5 @@ export function initSettings(context) {
 // --- Point d'entrée de la page « Paramètres de l'organisation »
 const context = organisationContext();
 initCategories(context);
+initCurrency(context);
 initSettings(context);

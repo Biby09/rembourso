@@ -5,6 +5,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config/organisation-page.php';
 /*
     « Paramètres de l'organisation » (/dashboard/organisation/settings/?id=…, engrenage du header), administrateurs :
     - catégories et sous-catégories (scripts/pages/organisation/categories.js) ;
+    - devise (scripts/pages/organisation/currency.js) ;
     - renommage et suppression de l'organisation (scripts/pages/organisation/settings.js).
 */
 ?>
@@ -27,19 +28,15 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
                 <h2 class="card-title fs-4">Catégories et sous-catégories</h2>
                 <p class="text-muted">Les demandes de remboursement peuvent être classées par catégorie et sous-catégorie.
                     Désactiver une option ne supprime rien : elle peut être réactivée plus tard.</p>
-                <div class="d-flex flex-wrap gap-3 mb-3">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" name="use-cat" id="use-cat" <?= $organisation->areCategoriesEnabled() ? 'checked' : '' ?>>
-                        <label class="form-check-label" for="use-cat">Activer les catégories</label>
-                    </div>
-                    <div class="form-check form-switch<?= $organisation->areCategoriesEnabled() ? '' : ' d-none' ?>">
-                        <input class="form-check-input" type="checkbox" role="switch" name="use-subcat" id="use-subcat" <?= $organisation->areSubcategoriesEnabled() ? 'checked' : '' ?>>
-                        <label class="form-check-label" for="use-subcat">Activer les sous-catégories</label>
-                    </div>
-                </div>
-                <!-- Rempli par scripts/pages/organisation/categories.js -->
-                <div id="categories-management-container" class="mt-4 text-center"></div>
-                <button type="button" id="add-category-button" class="btn btn-primary">Ajouter une catégorie</button>
+                <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/category-setup.php'; ?>
+            </div>
+        </section>
+
+        <!-- Devise -->
+        <section class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title fs-4">Devise</h2>
+                <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/currency-setup.php'; ?>
             </div>
         </section>
 

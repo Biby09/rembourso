@@ -12,6 +12,12 @@ class Organisation
         'member' => 'Membre',
     ];
 
+    // Devises possibles : celles acceptées par la QR-facture suisse (api/repayment/process.php)
+    public const CURRENCIES = [
+        'CHF' => 'Franc suisse (CHF)',
+        'EUR' => 'Euro (EUR)',
+    ];
+
     private int $id;
     private string $name;
     private bool $categoriesEnabled;      // les demandes sont classées par catégorie

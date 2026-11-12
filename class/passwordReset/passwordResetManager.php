@@ -53,8 +53,11 @@ class PasswordResetManager
             return $token;
         });
 
-        $message = "Vous avez demandé à réinitialiser votre mot de passe. Pour ce faire, veuillez cliquer sur le lien suivant :\n" . token_link($token);
-        sendMail($account->getEmail(), 'Réinitialisation de mot de passe', $message, token: $token, loggedMessage: str_replace($token, '[REDACTED]', $message));
+        $message = "Vous avez demandé à réinitialiser le mot de passe de votre compte Rembourso. Le lien ci-dessous est valable une heure.\n\n"
+            . "Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail : votre mot de passe ne sera pas modifié.";
+        // Le message ne contient pas le lien : il n'est donc pas enregistré dans la table emails
+        sendMail($account->getEmail(), 'Réinitialisation de mot de passe', $message, token: $token,
+            action: ['label' => 'Choisir un nouveau mot de passe', 'url' => token_link($token)]);
     }
 
     /**

@@ -82,8 +82,12 @@ config/         Amorçage et fonctions communes
   repayment-api.php, accountless.php  Validation commune aux endpoints des demandes et des personnes sans compte
 dashboard/      Application : tableau de bord, Mon compte et pages d'une organisation
   organisation/     Nouvelle demande (index), requests/, cashier/, history/, members/, settings/
+                    init-orga.php + init-orga/page1..4 : assistant de configuration après la création (devise, catégories, membres)
 includes/       Partiels PHP : head, header/footer du site public, app-header/app-footer de l'application,
-                page-heading, champs réutilisés et modals/ (un fichier par fenêtre modale)
+                page-heading, réglages partagés entre l'assistant et les pages (currency-, category-, invitation-setup.php)
+                et modals/ (un fichier par fenêtre modale)
+                repayment-item.php + pagination.php : liste des demandes (tableau de bord, « Mes demandes »)
+                mail/layout.php : gabarit HTML des e-mails (config/mail.php envoie une version HTML et une version texte)
 login/          Authentification, mot de passe oublié
 migration/      Scripts SQL à exécuter en production lors des déploiements (préfixés par la date)
 register/       Inscription
@@ -130,15 +134,15 @@ scripts/
     receipt-gallery.js  Aperçu et galerie des quittances
     receipt-files.js    Validation des fichiers de quittance
     receipt-compressor.js  Photos réduites et PDF convertis en images (pdf.js) dans le navigateur, avant l'envoi
-    repayment-accordion.js, repayment-edit-dialog.js  Affichage et modification d'une demande
+    repayment-badges.js, repayment-edit-dialog.js  Badge « Urgent » et modification d'une demande
     person-fields.js    Champs d'une personne sans compte
     pagination.js       Pagination
     invitation-response.js  Réponse à une invitation
   pages/          Un point d'entrée par page
     ajax-forms.js   Connexion, mot de passe oublié / réinitialisation, contact, lien de création de compte
     register.js, account.js, dashboard.js, invitation.js
-    organisation/   Une page = un fichier : submit.js, requests.js, cashier.js, history.js, members.js, settings.js
-                    (+ modules accountless.js, categories.js et context.js)
+    organisation/   Une page = un fichier : submit.js, requests.js, cashier.js, history.js, members.js, settings.js, init-orga.js
+                    (+ modules accountless.js, categories.js, currency.js, member-management.js et context.js)
 ```
 
 pdf.js (`pdfjs-dist`, version figée dans `package.json`) est servi depuis `/node_modules` comme Bootstrap, à cause de la CSP : `node_modules` doit donc être déployé avec le site. Le `.htaccess` de la racine déclare le type des fichiers `.mjs`.

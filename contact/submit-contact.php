@@ -25,8 +25,8 @@ if (!$email || $subject === '' || $message === '') {
 
 rate_limit_consume('contact_ip', $_SERVER['REMOTE_ADDR'] ?? 'unknown', 5, 3600);
 
-$message_content = "Nom : $name\nEmail : $email\n\n Objet: $subject\nMessage :\n$message";
-
-$success = sendMail('webmaster@florianlovis.ch', $subject, $message_content, "Reply-To: $email\r\n");
+// « Répondre » dans la messagerie écrit directement à la personne
+$success = sendMail('webmaster@florianlovis.ch', 'Contact : ' . $subject, "Nouveau message reçu depuis le formulaire de contact :\n\n" . $message,
+    "Reply-To: $email", details: ['Nom' => $name !== '' ? $name : '—', 'E-mail' => $email, 'Objet' => $subject]);
 
 echo json_encode(['success' => (bool) $success]);

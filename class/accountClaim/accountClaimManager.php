@@ -66,10 +66,12 @@ class AccountClaimManager
 
         $subject = 'Vos demandes de remboursement – ' . $organisation->getName();
         $message = $organisation->getName() . " a enregistré une ou plusieurs demandes de remboursement à votre nom sur Rembourso."
-            . "\n\nPour créer votre compte et suivre vos remboursements, cliquez sur le lien suivant (valable 30 jours) :\n" . token_link($token)
-            . "\n\nSi vous avez déjà un compte Rembourso avec cette adresse e-mail, ce lien vous permettra d'y rattacher ces demandes.";
+            . "\n\nCréez votre compte pour suivre vos remboursements. Le lien est valable 30 jours."
+            . "\n\nVous avez déjà un compte Rembourso avec cette adresse e-mail ? Le même lien vous permettra d'y rattacher ces demandes.";
 
-        if (!sendMail($person->getEmail(), $subject, $message, token: $token, loggedMessage: str_replace($token, '[REDACTED]', $message))) {
+        // Le message ne contient pas le lien : il n'est donc pas enregistré dans la table emails
+        if (!sendMail($person->getEmail(), $subject, $message, token: $token,
+            action: ['label' => 'Créer mon compte', 'url' => token_link($token)])) {
             throw new Exception("The e-mail could not be sent");
         }
     }

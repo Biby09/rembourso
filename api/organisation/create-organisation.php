@@ -21,5 +21,6 @@ try {
 
 json_success([
     'message' => 'Organisation créée avec succès',
-    'redirect' => '/dashboard/organisation/?id=' . $organisation->getId(),
+    // Assistant de configuration de la nouvelle organisation
+    'redirect' => '/dashboard/organisation/init-orga.php?id=' . $organisation->getId() . '&page=1',
 ]);

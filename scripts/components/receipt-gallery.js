@@ -19,7 +19,7 @@ export function receiptPreviewHtml(repayment, maxHeight = 400) {
 
     return html`
         <div class="text-center">
-            ${count > 1 ? trigger('btn btn-link btn-sm p-0 mb-2', `Voir les autres quittances (${count})`) : ''}
+            ${count > 1 ? html`<div class="mb-2">${trigger('btn btn-link btn-sm p-0', `Voir les autres quittances (${count})`)}</div>` : ''}
             ${trigger('border-0 bg-transparent p-0', html`
                 <img class="receipt_image mw-100" style="max-height: ${maxHeight}px; object-fit: contain;"
                     src="${api.receiptUrl(repayment.id)}" alt="Quittance">`)}

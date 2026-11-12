@@ -140,10 +140,12 @@ class InvitationManager
     private function sendInvitationMail(Invitation $invitation, User $member, bool $reminder): bool
     {
         $subject = ($reminder ? 'Rappel : ' : '') . "Invitation à rejoindre l'organisation " . $invitation->getOrganisationName();
-        $message = "Vous avez été invité à rejoindre l'organisation " . $invitation->getOrganisationName() . ".\n\n"
-            . "Pour accepter l'invitation, veuillez cliquer sur le lien suivant :\n" . token_link($invitation->getToken());
+        $message = "Vous avez été invité à rejoindre l'organisation " . $invitation->getOrganisationName()
+            . ' en tant que ' . mb_strtolower($invitation->getRoleLabel()) . ".\n\n"
+            . "Connectez-vous à Rembourso pour accepter ou refuser l'invitation. Le lien est valable 30 jours.";
 
-        return (bool) sendMail($member->getEmail(), $subject, $message, token: $invitation->getToken());
+        return (bool) sendMail($member->getEmail(), $subject, $message, token: $invitation->getToken(),
+            action: ['label' => "Voir l'invitation", 'url' => token_link($invitation->getToken())]);
     }
 
     private function fetchOne(string $sql, array $params): Invitation

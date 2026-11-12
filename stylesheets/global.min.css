@@ -239,19 +239,21 @@ address {
   line-height: inherit;
 }
 
-
+ol,
 ul {
   padding-left: 2rem;
 }
 
-
+ol,
 ul {
   margin-top: 0;
   margin-bottom: 1rem;
 }
 
-
-ul ul {
+ol ol,
+ul ul,
+ol ul,
+ul ol {
   margin-bottom: 0;
 }
 
@@ -1896,6 +1898,29 @@ textarea.form-control {
     display: none;
   }
 }
+@media (min-width: 1200px) {
+  .navbar-expand-xl {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+  .navbar-expand-xl .navbar-nav {
+    flex-direction: row;
+  }
+  .navbar-expand-xl .navbar-nav .dropdown-menu {
+    position: absolute;
+  }
+  .navbar-expand-xl .navbar-nav .nav-link {
+    padding-right: var(--bs-navbar-nav-link-padding-x);
+    padding-left: var(--bs-navbar-nav-link-padding-x);
+  }
+  .navbar-expand-xl .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+  }
+  .navbar-expand-xl .navbar-toggler {
+    display: none;
+  }
+}
 
 .card {
   --bs-card-spacer-y: 1rem;
@@ -2127,6 +2152,60 @@ textarea.form-control {
   display: flex;
   padding-left: 0;
   list-style: none;
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
+  font-size: var(--bs-pagination-font-size);
+  color: var(--bs-pagination-color);
+  background-color: var(--bs-pagination-bg);
+  border: var(--bs-pagination-border-width) solid var(--bs-pagination-border-color);
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-link {
+    transition: none;
+  }
+}
+.page-link:hover {
+  z-index: 2;
+  color: var(--bs-pagination-hover-color);
+  text-decoration: none;
+  background-color: var(--bs-pagination-hover-bg);
+  border-color: var(--bs-pagination-hover-border-color);
+}
+.page-link:focus {
+  z-index: 3;
+  color: var(--bs-pagination-focus-color);
+  background-color: var(--bs-pagination-focus-bg);
+  outline: 0;
+  box-shadow: var(--bs-pagination-focus-box-shadow);
+}
+.page-link.active, .active > .page-link {
+  z-index: 3;
+  color: var(--bs-pagination-active-color);
+  background-color: var(--bs-pagination-active-bg);
+  border-color: var(--bs-pagination-active-border-color);
+}
+.page-link.disabled, .disabled > .page-link {
+  color: var(--bs-pagination-disabled-color);
+  pointer-events: none;
+  background-color: var(--bs-pagination-disabled-bg);
+  border-color: var(--bs-pagination-disabled-border-color);
+}
+
+.page-item:not(:first-child) .page-link {
+  margin-left: calc(-1 * var(--bs-border-width));
+}
+.page-item:first-child .page-link {
+  border-top-left-radius: var(--bs-pagination-border-radius);
+  border-bottom-left-radius: var(--bs-pagination-border-radius);
+}
+.page-item:last-child .page-link {
+  border-top-right-radius: var(--bs-pagination-border-radius);
+  border-bottom-right-radius: var(--bs-pagination-border-radius);
 }
 
 .badge {
@@ -2842,6 +2921,23 @@ textarea.form-control {
   text-decoration-color: RGBA(212, 230, 217, var(--bs-link-underline-opacity, 1)) !important;
 }
 
+.ratio {
+  position: relative;
+  width: 100%;
+}
+.ratio::before {
+  display: block;
+  padding-top: var(--bs-aspect-ratio);
+  content: "";
+}
+.ratio > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .fixed-top {
   position: fixed;
   top: 0;
@@ -2866,6 +2962,10 @@ textarea.form-control {
 
 .d-block {
   display: block !important;
+}
+
+.d-grid {
+  display: grid !important;
 }
 
 .d-flex {
@@ -2991,10 +3091,6 @@ textarea.form-control {
   justify-content: space-between !important;
 }
 
-.align-items-start {
-  align-items: flex-start !important;
-}
-
 .align-items-end {
   align-items: flex-end !important;
 }
@@ -3031,6 +3127,10 @@ textarea.form-control {
 
 .me-2 {
   margin-right: 0.5rem !important;
+}
+
+.me-3 {
+  margin-right: 1rem !important;
 }
 
 .me-auto {
@@ -3486,6 +3586,30 @@ textarea.form-control {
 }
 
 @media (min-width: 576px) {
+  .d-sm-flex {
+    display: flex !important;
+  }
+  .justify-content-sm-between {
+    justify-content: space-between !important;
+  }
+  .align-items-sm-center {
+    align-items: center !important;
+  }
+  .order-sm-1 {
+    order: 1 !important;
+  }
+  .order-sm-2 {
+    order: 2 !important;
+  }
+  .order-sm-3 {
+    order: 3 !important;
+  }
+  .me-sm-3 {
+    margin-right: 1rem !important;
+  }
+  .ms-sm-auto {
+    margin-left: auto !important;
+  }
   .text-sm-start {
     text-align: left !important;
   }
@@ -3497,6 +3621,9 @@ textarea.form-control {
   }
 }
 @media (min-width: 768px) {
+  .d-md-block {
+    display: block !important;
+  }
   .text-md-start {
     text-align: left !important;
   }
@@ -3508,24 +3635,6 @@ textarea.form-control {
   }
 }
 @media (min-width: 992px) {
-  .d-lg-block {
-    display: block !important;
-  }
-  .d-lg-inline-flex {
-    display: inline-flex !important;
-  }
-  .d-lg-none {
-    display: none !important;
-  }
-  .order-lg-last {
-    order: 6 !important;
-  }
-  .mt-lg-0 {
-    margin-top: 0 !important;
-  }
-  .gap-lg-3 {
-    gap: 1rem !important;
-  }
   .text-lg-start {
     text-align: left !important;
   }
@@ -3537,6 +3646,24 @@ textarea.form-control {
   }
 }
 @media (min-width: 1200px) {
+  .d-xl-block {
+    display: block !important;
+  }
+  .d-xl-inline-flex {
+    display: inline-flex !important;
+  }
+  .d-xl-none {
+    display: none !important;
+  }
+  .order-xl-last {
+    order: 6 !important;
+  }
+  .mt-xl-0 {
+    margin-top: 0 !important;
+  }
+  .gap-xl-3 {
+    gap: 1rem !important;
+  }
   .text-xl-start {
     text-align: left !important;
   }
@@ -3603,6 +3730,10 @@ textarea.form-control {
   content: "\f280";
 }
 
+.bi-envelope::before {
+  content: "\f32f";
+}
+
 .bi-exclamation-triangle-fill::before {
   content: "\f33a";
 }
@@ -3619,8 +3750,16 @@ textarea.form-control {
   content: "\f4da";
 }
 
+.bi-tags::before {
+  content: "\f5b2";
+}
+
 .bi-trash::before {
   content: "\f5de";
+}
+
+.bi-cash-coin::before {
+  content: "\f632";
 }
 
 .bi-check-lg::before {
@@ -3724,7 +3863,7 @@ footer {
   flex: 1 1 0%;
   min-width: 0;
 }
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
   .app-header-start {
     flex: 0 1 auto;
   }
@@ -3734,9 +3873,9 @@ footer {
   min-width: 0;
   flex: 1 1 auto;
 }
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
   .app-org-switch {
-    width: 16rem;
+    width: 14rem;
     flex: 0 0 auto;
   }
 }

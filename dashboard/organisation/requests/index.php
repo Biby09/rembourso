@@ -3,13 +3,19 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config/organisation-page.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/class/repayment/repaymentRequestManager.php';
 
 /*
-    « Mes demandes » (/dashboard/organisation/requests/?id=…) : demandes dont l'utilisateur est le bénéficiaire
-    ou qu'il a saisies pour quelqu'un d'autre, par page de 10 (scripts/pages/organisation/requests.js).
-    Une demande en attente peut être modifiée ou supprimée (modal chargé par scripts/components/repayment-edit-dialog.js).
+    « Mes demandes » (/dashboard/organisation/requests/?id=…&page=N) : demandes dont l'utilisateur est le bénéficiaire
+    ou qu'il a saisies pour quelqu'un d'autre, par page de 10, affichées en PHP (includes/repayment-item.php).
+    Une demande en attente peut être modifiée ou supprimée (scripts/pages/organisation/requests.js).
 */
 
-$requestCount = (new RepaymentRequestManager($mysqlClient, $organisation, $user))->countMyRequests();
-$pageCount = (int) ceil($requestCount / RepaymentRequestManager::PAGE_SIZE);
+$repaymentRequestManager = new RepaymentRequestManager($mysqlClient, $organisation, $user);
+$requestCount = $repaymentRequestManager->countMyRequests();
+$pageCount = max(1, (int) ceil($requestCount / RepaymentRequestManager::PAGE_SIZE));
+// Page demandée, ramenée entre 1 et la dernière (ex. après la suppression de la seule demande de la dernière page)
+$page = min($pageCount, max(1, (int) ($_GET['page'] ?? 1)));
+$requests = $repaymentRequestManager->getMyRequests($page);
+
+$pageUrl = fn(int $number) => organisation_url($organisation, 'requests/') . '&page=' . $number;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -28,10 +34,19 @@ include $_SERVER['DOCUMENT_ROOT'] . '/includes/head.php';
         include $_SERVER['DOCUMENT_ROOT'] . '/includes/page-heading.php';
         ?>
 
-        <?php if ($requestCount > 0): ?>
-            <!-- Rempli par scripts/pages/organisation/requests.js -->
-            <div class="accordion" id="accordion-repayment"></div>
-            <div class="d-flex justify-content-center gap-2 mt-4" id="repayment-history-pagination" data-page-count="<?= $pageCount ?>"></div>
+        <?php if ($requests): ?>
+            <div class="accordion" id="accordion-repayment">
+                <?php
+                $accordionId = 'accordion-repayment';
+                $currency = $organisation->getCurrency();
+                $currentUserId = $user->getId();
+                foreach ($requests as $request) {
+                    $editable = $repaymentRequestManager->isEditable($request);
+                    include $_SERVER['DOCUMENT_ROOT'] . '/includes/repayment-item.php';
+                }
+                ?>
+            </div>
+            <?php include $_SERVER['DOCUMENT_ROOT'] . '/includes/pagination.php'; ?>
         <?php else: ?>
             <div class="card">
                 <div class="card-body text-center text-muted py-5">Vous n'avez encore aucune demande de remboursement dans cette organisation.</div>
