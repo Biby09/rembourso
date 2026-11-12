@@ -1,0 +1,2 @@
+# Bloque l'accès web au dossier (code PHP inclus par les pages, jamais appelé directement)
+Require all denied

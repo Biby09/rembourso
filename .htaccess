@@ -3,3 +3,12 @@
 <IfModule mod_mime.c>
     AddType text/javascript .mjs
 </IfModule>
+
+# Fichiers du projet qui ne doivent pas être lisibles depuis le web :
+# dump et migrations SQL (schéma de la base), documentation, configuration de Composer / npm / PostCSS, journaux
+<FilesMatch "(\.(sql|md|lock|log)|^composer\.json|^package\.json|^package-lock\.json|^postcss\.config\.js|^\.gitignore)$">
+    Require all denied
+</FilesMatch>
+
+# Dépôt git (si le site est déployé avec git clone / git pull)
+RedirectMatch 404 /\.git(/|$)

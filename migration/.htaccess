@@ -1,0 +1,2 @@
+# Bloque l'accès web aux scripts SQL de migration (à exécuter à la main sur le serveur)
+Require all denied

@@ -11,8 +11,9 @@
 /node_modules/
 /package-lock.json
 
-# Uploads / generated media
-/uploads/
+# Uploads / generated media (sauf le .htaccess qui bloque l'accès direct aux quittances)
+/uploads/*
+!/uploads/.htaccess
 
 # Environment / secrets
 .env
